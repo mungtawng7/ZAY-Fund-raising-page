@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZAY Youth Fundraiser | Zomi SDA Tulsa Church</title>
+  <meta name="description" content="Support the ZAY Youth Fundraiser organized by Zomi SDA Church in Tulsa, OK. Delicious home-style food menu and professional lawn mowing services to empower youth ministry and community programs.">
+  <meta name="keywords" content="ZAY Youth Fundraiser, Zomi SDA Tulsa, Lawn Mowing, Africa Donuts, Shwe Yin Aye, Fried Rice, Fruit Juice, Church Youth Ministry, Tulsa OK">
+  
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="Support the ZAY Youth Fundraiser | Zomi SDA Tulsa">
+  <meta property="og:description" content="Order delicious food or book quality lawn mowing to support youth ministry, camps, and community projects!">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <aside class="announcement-bar" aria-label="Operating announcement">
+    <div class="container announcement-inner">
+      <div class="announcement-left">
+        <span class="pulse-dot"></span>
+        <span class="announcement-text">
+          <strong class="tag-badge">ZAY Fundraiser</strong> Sunday–Thursday • 8:00 AM – 4:00 PM • 100% Proceeds Support Youth Ministry!
+        </span>
+      </div>
+      <div class="announcement-right">
+        <a href="tel:9183464561" class="announcement-link"><i class="fa-solid fa-phone"></i> (918) 346-4561</a>
+        <span class="divider-dot">•</span>
+        <span id="liveStatusBadge" class="status-pill status-open"><i class="fa-solid fa-circle-check"></i> Open for Orders</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Sticky Header & Navigation -->
+  <header class="main-header" id="mainHeader">
+    <div class="container header-container">
+      <!-- Church Logo & Youth Emblem -->
+      <a href="#home" class="brand-logo" aria-label="ZAY Youth Fundraiser Home">
+        <div class="logo-symbol">
+          <img src="logo.webp" alt="Zomi SDA Church Logo" class="church-logo-img">
+          <span class="logo-badge">AY</span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">ZAY YOUTH</span>
+          <span class="brand-subtitle">Zomi SDA Church Tulsa</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav class="nav-menu" id="navMenu" aria-label="Primary Navigation">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#home" class="nav-link active">Home</a></li>
+          <li class="nav-item"><a href="#services" class="nav-link">Services</a></li>
+          <li class="nav-item"><a href="#food-menu" class="nav-link">Food Menu</a></li>
+          <li class="nav-item"><a href="#about" class="nav-link">About Us</a></li>
+          <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Action Area: Cart Trigger & Book Now CTA -->
+      <div class="header-actions">
+        <!-- Food Cart Button -->
+        <button class="cart-btn" id="openCartBtn" aria-label="View food order cart" title="View Cart">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <span class="cart-btn-label">Order</span>
+          <span class="cart-count-badge" id="cartCountBadge">0</span>
+        </button>
+
+        <!-- Book Now Primary Action -->
+        <a href="#services" class="btn btn-primary btn-nav-book">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span>Book Now</span>
+        </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-toggle" id="mobileMenuBtn" aria-expanded="false" aria-label="Toggle navigation menu" aria-controls="navMenu">
+          <span class="bar bar-1"></span>
+          <span class="bar bar-2"></span>
+          <span class="bar bar-3"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Overlay -->
+  <div class="mobile-drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <!-- Animated background shapes & glow -->
+    <div class="hero-bg-glow glow-1"></div>
+    <div class="hero-bg-glow glow-2"></div>
+    <div class="hero-bg-glow glow-3"></div>
+
+    <div class="container hero-container">
+      <div class="hero-content">
+        <div class="hero-chip animate-fade-in">
+          <span class="chip-sparkle"><i class="fa-solid fa-heart"></i></span>
+          <span>Adventist Youth Ministry Outreach</span>
+        </div>
+
+        <h1 class="hero-title animate-fade-in delay-1">
+          Support the <span class="gradient-text">ZAY Youth</span> Fundraiser
+        </h1>
+
+        <p class="hero-lead animate-fade-in delay-2">
+          Every yard mowed and every delicious meal ordered directly empowers our youth with 
+          spiritual leadership training, summer Bible camp scholarships, mission trips, and community outreach. 
+          Join hands with <strong>Zomi SDA Church</strong> in building a brighter future!
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="hero-cta-group animate-fade-in delay-3">
+          <a href="#services" class="btn btn-primary btn-lg shadow-lift">
+            <i class="fa-solid fa-scissors"></i>
+            <span>Book a Service</span>
+          </a>
+          <a href="#food-menu" class="btn btn-secondary btn-lg shadow-lift">
+            <i class="fa-solid fa-utensils"></i>
+            <span>Order Food</span>
+          </a>
+          <a href="#about" class="btn btn-outline btn-lg">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Our Mission</span>
+          </a>
+        </div>
+
+        <!-- Highlight Trust Badges -->
+        <div class="hero-features animate-fade-in delay-4">
+          <div class="feature-item">
+            <div class="feature-icon bg-green-light"><i class="fa-solid fa-seedling text-green"></i></div>
+            <div class="feature-text">
+              <strong>100% Non-Profit</strong>
+              <span>Direct Youth Impact</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon bg-amber-light"><i class="fa-solid fa-shield-halved text-amber"></i></div>
+            <div class="feature-text">
+              <strong>Faithful & Reliable</strong>
+              <span>Church Supervised</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon bg-purple-light"><i class="fa-solid fa-clock text-purple"></i></div>
+            <div class="feature-text">
+              <strong>Sun – Thu Service</strong>
+              <span>8:00 AM – 4:00 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual Card & Live Goal Card -->
+      <div class="hero-visual animate-slide-up">
+        <div class="hero-card-composite">
+          <div class="hero-main-image-wrap">
+            <img 
+              src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=80" 
+              alt="Adventist Youth Group Volunteers Smiling Together" 
+              class="hero-main-image"
+              loading="eager"
+            >
+            <div class="hero-image-overlay"></div>
+            
+            <div class="floating-badge badge-top-right">
+              <i class="fa-solid fa-star text-gold"></i>
+              <div>
+                <strong>Tulsa Community</strong>
+                <span>Faith & Service</span>
+              </div>
+            </div>
+
+            <div class="floating-badge badge-bottom-left">
+              <i class="fa-solid fa-utensils text-coral"></i>
+              <div>
+                <strong>Fresh Home-Style Menu</strong>
+                <span>Burmese & African Specialties</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Goal Progress Tracker Box -->
+          <div class="fundraiser-progress-card">
+            <div class="progress-header">
+              <div>
+                <span class="progress-label">Youth Camp & Mission Goal</span>
+                <h4 class="progress-amount">$3,420 <span class="goal-total">/ $5,000</span></h4>
+              </div>
+              <span class="percentage-badge">68%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 68%;"></div>
+            </div>
+            <div class="progress-footer">
+              <span><i class="fa-solid fa-users"></i> 85+ Happy Neighbors</span>
+              <span><i class="fa-solid fa-hand-holding-heart"></i> Thank You!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wave Divider -->
+    <div class="hero-wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path d="M0,32L60,42.7C120,53,240,75,360,80C480,85,600,75,720,58.7C840,43,960,21,1080,21.3C1200,21,1320,43,1380,53.3L1440,64L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z" fill="#FFFFFF"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Quick Action Banner / Operating Hours Banner -->
+  <section class="hours-quick-bar" aria-label="Fundraiser hours summary">
+    <div class="container hours-banner-grid">
+      <div class="hours-card">
+        <div class="hours-icon"><i class="fa-regular fa-clock"></i></div>
+        <div class="hours-info">
+          <h3>Operating Schedule</h3>
+          <p class="hours-highlight"><strong>Sunday – Thursday:</strong> 8:00 a.m. – 4:00 p.m.</p>
+          <span class="hours-note"><i class="fa-solid fa-church"></i> Friday & Saturday: Closed for Worship & Sabbath</span>
+        </div>
+      </div>
+      <div class="hours-card">
+        <div class="hours-icon bg-accent"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="hours-info">
+          <h3>Service & Pickup Area</h3>
+          <p class="hours-highlight"><strong>Zomi SDA Church:</strong> 1437 S 129th E Ave, Tulsa, OK</p>
+          <span class="hours-note"><i class="fa-solid fa-truck-fast"></i> Lawn mowing throughout greater Tulsa area</span>
+        </div>
+      </div>
+      <div class="hours-card">
+        <div class="hours-icon bg-sun"><i class="fa-solid fa-phone-volume"></i></div>
+        <div class="hours-info">
+          <h3>Call / Text Inquiries</h3>
+          <p class="hours-highlight"><a href="tel:9183464561" class="phone-link">(918) 346-4561</a></p>
+          <span class="hours-note"><i class="fa-solid fa-envelope"></i> jkmungtawng2014@gmail.com</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lawn-Mowing Fundraiser Section -->
+  <section class="section-padding bg-light" id="services">
+    <div class="container">
+      <div class="section-heading text-center">
+        <div class="section-chip chip-lawn">
+          <i class="fa-solid fa-leaf"></i> Quality Lawn Care
+        </div>
+        <h2 class="section-title">Lawn-Mowing <span class="text-green-gradient">Fundraiser</span></h2>
+        <p class="section-desc">
+          Keep your yard clean, manicured, and looking beautiful while providing wholesome work experience 
+          and ministry funds for our enthusiastic youth crew. Every package includes precision mowing, clean edging, and debris cleanup.
+        </p>
+      </div>
+
+      <!-- Service Highlights Row -->
+      <div class="service-perks-grid">
+        <div class="perk-card">
+          <div class="perk-icon"><i class="fa-solid fa-scissors"></i></div>
+          <h4>Even Grass Cutting</h4>
+          <p>Proper cutting heights for lush, healthy green lawns.</p>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon"><i class="fa-solid fa-ruler-combined"></i></div>
+          <h4>Edge Trimming Included</h4>
+          <p>Crisp edges along walkways, fences, driveways, and flowerbeds.</p>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon"><i class="fa-solid fa-wind"></i></div>
+          <h4>Debris Blow & Cleanup</h4>
+          <p>We blow stray grass clippings off all concrete and porches.</p>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon"><i class="fa-solid fa-user-shield"></i></div>
+          <h4>Friendly Youth Supervision</h4>
+          <p>Supervised with care, diligence, and polite Christian manners.</p>
+        </div>
+      </div>
+
+      <!-- Pricing Packages Grid -->
+      <div class="pricing-cards-grid">
+        <!-- Small Yard Card -->
+        <div class="pricing-card" data-yard="Small Yard" data-price="40">
+          <div class="pricing-badge">Popular for Townhomes</div>
+          <div class="pricing-header">
+            <div class="yard-icon-circle"><i class="fa-solid fa-house"></i></div>
+            <h3 class="yard-title">Small Yard</h3>
+            <p class="yard-sub">Up to 0.25 Acre (Townhome / Front or Back)</p>
+          </div>
+          <div class="price-tag">
+            <span class="currency">$</span>
+            <span class="amount">40</span>
+            <span class="period">/ visit</span>
+          </div>
+          <ul class="pricing-checklist">
+            <li><i class="fa-solid fa-check"></i> Complete Front & Back Mowing</li>
+            <li><i class="fa-solid fa-check"></i> Perimeter String Trimming</li>
+            <li><i class="fa-solid fa-check"></i> Driveway & Sidewalk Edging</li>
+            <li><i class="fa-solid fa-check"></i> Clean Patio & Porch Blower Sweep</li>
+            <li><i class="fa-solid fa-check"></i> Grass Clippings Tidied Up</li>
+          </ul>
+          <button class="btn btn-lawn btn-block open-booking-btn" data-yard-size="Small Yard ($40)" data-price="40">
+            <i class="fa-solid fa-calendar-plus"></i> Book Lawn Mowing ($40)
+          </button>
+        </div>
+
+        <!-- Medium Yard Card (Featured) -->
+        <div class="pricing-card featured" data-yard="Medium Yard" data-price="60">
+          <div class="popular-ribbon"><i class="fa-solid fa-crown"></i> Most Popular</div>
+          <div class="pricing-header">
+            <div class="yard-icon-circle"><i class="fa-solid fa-tree"></i></div>
+            <h3 class="yard-title">Medium Yard</h3>
+            <p class="yard-sub">0.25 to 0.5 Acre (Standard Suburban Lot)</p>
+          </div>
+          <div class="price-tag">
+            <span class="currency">$</span>
+            <span class="amount">60</span>
+            <span class="period">/ visit</span>
+          </div>
+          <ul class="pricing-checklist">
+            <li><i class="fa-solid fa-check"></i> Complete Full Property Mowing</li>
+            <li><i class="fa-solid fa-check"></i> Detailed Fence & Obstacle Trimming</li>
+            <li><i class="fa-solid fa-check"></i> Sharp Walkway & Driveway Edging</li>
+            <li><i class="fa-solid fa-check"></i> Full Debris Blow-Down of All Hard Surfaces</li>
+            <li><i class="fa-solid fa-check"></i> Garden Bed Perimeter Check</li>
+          </ul>
+          <button class="btn btn-primary btn-block open-booking-btn" data-yard-size="Medium Yard ($60)" data-price="60">
+            <i class="fa-solid fa-calendar-plus"></i> Book Lawn Mowing ($60)
+          </button>
+        </div>
+
+        <!-- Large Yard Card -->
+        <div class="pricing-card" data-yard="Large Yard" data-price="80">
+          <div class="pricing-badge">Spacious Properties</div>
+          <div class="pricing-header">
+            <div class="yard-icon-circle"><i class="fa-solid fa-mountain-sun"></i></div>
+            <h3 class="yard-title">Large Yard</h3>
+            <p class="yard-sub">0.5 Acre & Up (Corner Lot / Large Property)</p>
+          </div>
+          <div class="price-tag">
+            <span class="currency">$</span>
+            <span class="amount">80</span>
+            <span class="period">/ visit</span>
+          </div>
+          <ul class="pricing-checklist">
+            <li><i class="fa-solid fa-check"></i> Extensive Multi-Zone Lawn Mowing</li>
+            <li><i class="fa-solid fa-check"></i> Full Edge & Fence-Line Trimming</li>
+            <li><i class="fa-solid fa-check"></i> Heavy-Duty Hard Surface Power Blowing</li>
+            <li><i class="fa-solid fa-check"></i> Corner-to-Corner Property Grooming</li>
+            <li><i class="fa-solid fa-check"></i> Extra Youth Crew Assigned for Speed</li>
+          </ul>
+          <button class="btn btn-lawn btn-block open-booking-btn" data-yard-size="Large Yard ($80)" data-price="80">
+            <i class="fa-solid fa-calendar-plus"></i> Book Lawn Mowing ($80)
+          </button>
+        </div>
+      </div>
+
+      <!-- Lawn Mowing Booking Callout CTA -->
+      <div class="booking-cta-banner">
+        <div class="booking-cta-text">
+          <h3>Need a custom schedule or quick quote?</h3>
+          <p>Book online now in under 1 minute or give us a call at <strong>(918) 346-4561</strong>.</p>
+        </div>
+        <button class="btn btn-light btn-lg open-booking-btn" data-yard-size="Custom / Need Quote" data-price="40">
+          <i class="fa-solid fa-clipboard-check"></i> Open Booking Form
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Food Fundraiser Section -->
+  <section class="section-padding bg-food" id="food-menu">
+    <div class="container">
+      <div class="section-heading text-center">
+        <div class="section-chip chip-food">
+          <i class="fa-solid fa-bowl-rice"></i> Fresh & Authentic Home-style Kitchen
+        </div>
+        <h2 class="section-title">Delicious Food <span class="text-coral-gradient">Fundraiser Menu</span></h2>
+        <p class="section-desc">
+          Prepared with love by our church community! Savor authentic homemade Burmese dessert, golden African donuts, 
+          fragrant wok fried rice, and refreshing fruit juice. Select your items below and place your order for pickup or delivery.
+        </p>
+      </div>
+
+      <!-- Food Menu Cards Grid -->
+      <div class="food-menu-grid">
+        <!-- Item 1: Africa Donuts ($3) -->
+        <article class="food-card" data-id="africa-donuts" data-name="Africa Donuts" data-price="3">
+          <div class="food-card-img-wrap">
+            <img 
+              src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=700&q=80" 
+              alt="Golden Fluffy African Donuts Puff Puff Mandazi" 
+              class="food-card-img"
+              loading="lazy"
+            >
+            <span class="food-price-badge">$3.00</span>
+            <span class="food-tag tag-sweet"><i class="fa-solid fa-cookie"></i> Sweet & Fluffy</span>
+          </div>
+          <div class="food-card-body">
+            <div class="food-title-row">
+              <h3 class="food-title">Africa Donuts</h3>
+              <span class="item-calories">Freshly Fried</span>
+            </div>
+            <p class="food-desc">
+              Golden, crispy on the outside and deliciously fluffy and airy on the inside. 
+              Traditional African beignet puff-puff style with a fragrant touch of nutmeg and warm sweetness.
+            </p>
+            <div class="food-meta">
+              <span><i class="fa-solid fa-box"></i> 1 Generous Serving</span>
+              <span class="status-available"><i class="fa-solid fa-circle"></i> Ready Today</span>
+            </div>
+            <div class="food-card-action">
+              <div class="qty-selector">
+                <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity" data-target="qty-africa-donuts">-</button>
+                <input type="number" id="qty-africa-donuts" class="qty-input" value="1" min="1" max="50" aria-label="Quantity for Africa Donuts">
+                <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity" data-target="qty-africa-donuts">+</button>
+              </div>
+              <button class="btn btn-add-order add-to-cart-btn" data-id="africa-donuts" data-name="Africa Donuts" data-price="3">
+                <i class="fa-solid fa-cart-plus"></i> Add to Order ($3)
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 2: Shwe Yin Aye ($5) -->
+        <article class="food-card" data-id="shwe-yin-aye" data-name="Shwe Yin Aye" data-price="5">
+          <div class="food-card-img-wrap">
+            <img 
+              src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=700&q=80" 
+              alt="Traditional Burmese Shwe Yin Aye Coconut Milk Dessert" 
+              class="food-card-img"
+              loading="lazy"
+            >
+            <span class="food-price-badge">$5.00</span>
+            <span class="food-tag tag-dessert"><i class="fa-solid fa-ice-cream"></i> Burmese Dessert</span>
+          </div>
+          <div class="food-card-body">
+            <div class="food-title-row">
+              <h3 class="food-title">Shwe Yin Aye</h3>
+              <span class="item-calories">Chilled Refreshment</span>
+            </div>
+            <p class="food-desc">
+              Famous Burmese traditional chilled dessert made with fragrant coconut milk, tender sago pearls, 
+              colorful pandan agar jelly strips, sweet sticky rice, and soft bread cubes. Cooling and heavenly!
+            </p>
+            <div class="food-meta">
+              <span><i class="fa-solid fa-snowflake"></i> Served Chilled</span>
+              <span class="status-available"><i class="fa-solid fa-circle"></i> Best Seller</span>
+            </div>
+            <div class="food-card-action">
+              <div class="qty-selector">
+                <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity" data-target="qty-shwe-yin-aye">-</button>
+                <input type="number" id="qty-shwe-yin-aye" class="qty-input" value="1" min="1" max="50" aria-label="Quantity for Shwe Yin Aye">
+                <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity" data-target="qty-shwe-yin-aye">+</button>
+              </div>
+              <button class="btn btn-add-order add-to-cart-btn" data-id="shwe-yin-aye" data-name="Shwe Yin Aye" data-price="5">
+                <i class="fa-solid fa-cart-plus"></i> Add to Order ($5)
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 3: Fried Rice ($10) -->
+        <article class="food-card" data-id="fried-rice" data-name="Fried Rice" data-price="10">
+          <div class="food-card-img-wrap">
+            <img 
+              src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=700&q=80" 
+              alt="Savory Asian Home-Style Fried Rice with Vegetables and Aromatics" 
+              class="food-card-img"
+              loading="lazy"
+            >
+            <span class="food-price-badge">$10.00</span>
+            <span class="food-tag tag-savory"><i class="fa-solid fa-fire"></i> Hot & Savory</span>
+          </div>
+          <div class="food-card-body">
+            <div class="food-title-row">
+              <h3 class="food-title">Fried Rice</h3>
+              <span class="item-calories">Hearty Entrée</span>
+            </div>
+            <p class="food-desc">
+              Sizzling wok-tossed premium jasmine rice infused with aromatic garlic, scallions, crisp garden 
+              vegetables, toasted sesame oil, and signature home-style church seasoning. Filling and flavorful!
+            </p>
+            <div class="food-meta">
+              <span><i class="fa-solid fa-bowl-food"></i> Large Platter</span>
+              <span class="status-available"><i class="fa-solid fa-circle"></i> Cooked Fresh</span>
+            </div>
+            <div class="food-card-action">
+              <div class="qty-selector">
+                <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity" data-target="qty-fried-rice">-</button>
+                <input type="number" id="qty-fried-rice" class="qty-input" value="1" min="1" max="50" aria-label="Quantity for Fried Rice">
+                <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity" data-target="qty-fried-rice">+</button>
+              </div>
+              <button class="btn btn-add-order add-to-cart-btn" data-id="fried-rice" data-name="Fried Rice" data-price="10">
+                <i class="fa-solid fa-cart-plus"></i> Add to Order ($10)
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 4: Fruit Juice ($4) -->
+        <article class="food-card" data-id="fruit-juice" data-name="Fruit Juice" data-price="4">
+          <div class="food-card-img-wrap">
+            <img 
+              src="https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=700&q=80" 
+              alt="Fresh Chilled Natural Fruit Juice Blend with Citrus and Berries" 
+              class="food-card-img"
+              loading="lazy"
+            >
+            <span class="food-price-badge">$4.00</span>
+            <span class="food-tag tag-drink"><i class="fa-solid fa-glass-water"></i> 100% Natural</span>
+          </div>
+          <div class="food-card-body">
+            <div class="food-title-row">
+              <h3 class="food-title">Fruit Juice</h3>
+              <span class="item-calories">Ice Chilled</span>
+            </div>
+            <p class="food-desc">
+              Delicious blend of crisp seasonal tropical fruits and citrus, freshly chilled and bursting with 
+              vitamins. The perfect refreshing companion to your donuts and fried rice meal!
+            </p>
+            <div class="food-meta">
+              <span><i class="fa-solid fa-droplet"></i> 16 oz Sealed Cup</span>
+              <span class="status-available"><i class="fa-solid fa-circle"></i> Cold Pressed</span>
+            </div>
+            <div class="food-card-action">
+              <div class="qty-selector">
+                <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity" data-target="qty-fruit-juice">-</button>
+                <input type="number" id="qty-fruit-juice" class="qty-input" value="1" min="1" max="50" aria-label="Quantity for Fruit Juice">
+                <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity" data-target="qty-fruit-juice">+</button>
+              </div>
+              <button class="btn btn-add-order add-to-cart-btn" data-id="fruit-juice" data-name="Fruit Juice" data-price="4">
+                <i class="fa-solid fa-cart-plus"></i> Add to Order ($4)
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Live Order Summary & Checkout Panel -->
+      <div class="order-summary-panel" id="orderSummaryPanel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <i class="fa-solid fa-receipt text-coral"></i>
+            <div>
+              <h3>Your Food Fundraiser Order</h3>
+              <p>Add items above, select pickup or delivery, and calculate your total instantly.</p>
+            </div>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-danger" id="clearCartBtn" style="display:none;">
+            <i class="fa-solid fa-trash-can"></i> Clear Order
+          </button>
+        </div>
+
+        <div class="cart-items-container" id="cartItemsContainer">
+          <div class="empty-cart-state" id="emptyCartState">
+            <div class="empty-cart-icon"><i class="fa-solid fa-utensils"></i></div>
+            <p>Your food order is empty right now.</p>
+            <span class="sub-text">Click <strong>"Add to Order"</strong> on any menu item above to start your order!</span>
+          </div>
+          <div class="cart-items-list" id="cartItemsList" style="display:none;"></div>
+        </div>
+
+        <!-- Embedded Order & Calculation Form -->
+        <form class="order-form-grid" id="foodOrderForm">
+          <div class="order-method-box">
+            <label class="form-label font-bold">Fulfillment Method *</label>
+            <div class="fulfillment-options">
+              <label class="fulfillment-card active">
+                <input type="radio" name="orderType" value="pickup" checked>
+                <div class="radio-content">
+                  <i class="fa-solid fa-store"></i>
+                  <div>
+                    <strong>Church Pickup</strong>
+                    <span>Free at 1437 S 129th E Ave</span>
+                  </div>
+                </div>
+              </label>
+              <label class="fulfillment-card">
+                <input type="radio" name="orderType" value="delivery">
+                <div class="radio-content">
+                  <i class="fa-solid fa-car-side"></i>
+                  <div>
+                    <strong>Local Tulsa Delivery</strong>
+                    <span>+$3.00 Youth Driver Fee</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="order-customer-fields">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="foodCustomerName" class="form-label">Full Name *</label>
+                <input type="text" id="foodCustomerName" class="form-control" placeholder="e.g. John Doe" required>
+              </div>
+              <div class="form-group">
+                <label for="foodCustomerPhone" class="form-label">Phone Number *</label>
+                <input type="tel" id="foodCustomerPhone" class="form-control" placeholder="(918) 000-0000" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="foodCustomerEmail" class="form-label">Email Address *</label>
+                <input type="email" id="foodCustomerEmail" class="form-control" placeholder="yourname@gmail.com" required>
+              </div>
+              <div class="form-group">
+                <label for="foodPreferredTime" class="form-label">Preferred Date & Time *</label>
+                <input type="text" id="foodPreferredTime" class="form-control" placeholder="e.g. Today 12:30 PM (Sun-Thu 8am-4pm)" required>
+              </div>
+            </div>
+
+            <div class="form-group" id="deliveryAddressGroup" style="display: none;">
+              <label for="foodDeliveryAddress" class="form-label">Delivery Address in Tulsa *</label>
+              <input type="text" id="foodDeliveryAddress" class="form-control" placeholder="Street Address, City, Zip">
+            </div>
+
+            <div class="form-group">
+              <label for="foodNotes" class="form-label">Special Instructions / Dietary Notes</label>
+              <textarea id="foodNotes" class="form-control" rows="2" placeholder="e.g., extra spicy, no onions, call upon arrival..."></textarea>
+            </div>
+          </div>
+
+          <!-- Total Calculation Breakdown -->
+          <div class="order-calculation-card">
+            <h4 class="calc-title"><i class="fa-solid fa-calculator"></i> Estimated Total Calculation</h4>
+            <div class="calc-row">
+              <span>Items Subtotal</span>
+              <span id="calcSubtotal" class="calc-val">$0.00</span>
+            </div>
+            <div class="calc-row">
+              <span>Fulfillment (Pickup / Delivery)</span>
+              <span id="calcDeliveryFee" class="calc-val">$0.00</span>
+            </div>
+            <div class="calc-row">
+              <span>Youth Ministry Donation Tip (Optional)</span>
+              <div class="tip-selector">
+                <button type="button" class="tip-btn active" data-tip="0">$0</button>
+                <button type="button" class="tip-btn" data-tip="2">+$2</button>
+                <button type="button" class="tip-btn" data-tip="5">+$5</button>
+                <button type="button" class="tip-btn" data-tip="10">+$10</button>
+              </div>
+            </div>
+            <hr class="calc-divider">
+            <div class="calc-row calc-grand-total">
+              <strong>Grand Total Due:</strong>
+              <strong id="calcGrandTotal" class="total-highlight">$0.00</strong>
+            </div>
+            <p class="payment-notice">
+              <i class="fa-solid fa-circle-info"></i> Cash, Venmo, Zelle, or Check payable upon pickup/delivery. 100% tax-deductible ministry donation!
+            </p>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-block" id="submitFoodOrderBtn">
+              <i class="fa-solid fa-check-circle"></i> Submit Food Order & Reserve Items
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- About the Fundraiser Section -->
+  <section class="section-padding bg-white" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-images-col">
+          <div class="about-image-card primary-img">
+            <img 
+              src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80" 
+              alt="Adventist youth group working together with enthusiasm" 
+              loading="lazy"
+            >
+          </div>
+          <div class="about-badge-card">
+            <div class="about-badge-icon"><i class="fa-solid fa-hands-holding-child"></i></div>
+            <div class="about-badge-text">
+              <strong>ZAY Youth Ministry</strong>
+              <span>Zomi Seventh-day Adventist Church Tulsa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-text-col">
+          <div class="section-chip chip-about">
+            <i class="fa-solid fa-cross"></i> Our Story & Purpose
+          </div>
+          <h2 class="section-title">About the <span class="text-purple-gradient">ZAY Youth Fundraiser</span></h2>
+          
+          <p class="about-intro">
+            The <strong>ZAY (Zomi Adventist Youth)</strong> fundraiser is proudly organized by the energetic youth group of 
+            <strong>Zomi SDA Church in Tulsa, Oklahoma</strong>. 
+          </p>
+
+          <p class="about-body">
+            Our mission is to nurture strong Christian character, teamwork, practical work ethic, and servant leadership 
+            among young people. The money raised through lawn mowing and our home-style food sales directly supports:
+          </p>
+
+          <!-- Impact Grid -->
+          <div class="impact-cards-grid">
+            <div class="impact-box">
+              <div class="impact-icon-box bg-purple-soft"><i class="fa-solid fa-campground text-purple"></i></div>
+              <div class="impact-box-info">
+                <h4>Youth Bible Camps & Retreats</h4>
+                <p>Providing camp fees & transport for spiritual growth and team building.</p>
+              </div>
+            </div>
+
+            <div class="impact-box">
+              <div class="impact-icon-box bg-green-soft"><i class="fa-solid fa-hand-holding-heart text-green"></i></div>
+              <div class="impact-box-info">
+                <h4>Community Outreach & Food Drives</h4>
+                <p>Distributing groceries and assisting elderly church and neighborhood members.</p>
+              </div>
+            </div>
+
+            <div class="impact-box">
+              <div class="impact-icon-box bg-coral-soft"><i class="fa-solid fa-music text-coral"></i></div>
+              <div class="impact-box-info">
+                <h4>Youth Ministry & Music Programs</h4>
+                <p>Equipping our youth choir, audio-visual team, and Sabbath school classrooms.</p>
+              </div>
+            </div>
+
+            <div class="impact-box">
+              <div class="impact-icon-box bg-amber-soft"><i class="fa-solid fa-graduation-cap text-amber"></i></div>
+              <div class="impact-box-info">
+                <h4>Education & Mission Trips</h4>
+                <p>Scholarship aids and youth mission endeavors across the United States.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Youth Scripture Quote -->
+          <div class="scripture-quote-card">
+            <i class="fa-solid fa-quote-left quote-icon"></i>
+            <blockquote>
+              “Don’t let anyone look down on you because you are young, but set an example for the believers in speech, in conduct, in love, in faith and in purity.”
+            </blockquote>
+            <cite>— 1 Timothy 4:12</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Business Hours & Operating Schedule Details -->
+  <section class="section-padding bg-light-purple" id="hours">
+    <div class="container">
+      <div class="section-heading text-center">
+        <div class="section-chip chip-hours">
+          <i class="fa-solid fa-calendar-days"></i> When We Operate
+        </div>
+        <h2 class="section-title">Business <span class="text-purple-gradient">Hours & Availability</span></h2>
+        <p class="section-desc">
+          We operate five days a week from Sunday through Thursday. In accordance with Seventh-day Adventist faith, 
+          we pause all commercial fundraising on Friday sunset through Saturday sunset for Sabbath worship and rest.
+        </p>
+      </div>
+
+      <div class="hours-display-wrapper">
+        <div class="hours-schedule-card">
+          <div class="schedule-head">
+            <i class="fa-solid fa-business-time"></i>
+            <div>
+              <h3>Weekly Operating Schedule</h3>
+              <span>Tulsa, Oklahoma (Central Time)</span>
+            </div>
+          </div>
+          
+          <ul class="schedule-list">
+            <li class="schedule-row active-day">
+              <div class="day-col">
+                <span class="day-name">Sunday</span>
+                <span class="day-badge open-badge">Open</span>
+              </div>
+              <div class="time-col">8:00 a.m. – 4:00 p.m.</div>
+            </li>
+            <li class="schedule-row active-day">
+              <div class="day-col">
+                <span class="day-name">Monday</span>
+                <span class="day-badge open-badge">Open</span>
+              </div>
+              <div class="time-col">8:00 a.m. – 4:00 p.m.</div>
+            </li>
+            <li class="schedule-row active-day">
+              <div class="day-col">
+                <span class="day-name">Tuesday</span>
+                <span class="day-badge open-badge">Open</span>
+              </div>
+              <div class="time-col">8:00 a.m. – 4:00 p.m.</div>
+            </li>
+            <li class="schedule-row active-day">
+              <div class="day-col">
+                <span class="day-name">Wednesday</span>
+                <span class="day-badge open-badge">Open</span>
+              </div>
+              <div class="time-col">8:00 a.m. – 4:00 p.m.</div>
+            </li>
+            <li class="schedule-row active-day">
+              <div class="day-col">
+                <span class="day-name">Thursday</span>
+                <span class="day-badge open-badge">Open</span>
+              </div>
+              <div class="time-col">8:00 a.m. – 4:00 p.m.</div>
+            </li>
+            <li class="schedule-row sabbath-day">
+              <div class="day-col">
+                <span class="day-name">Friday</span>
+                <span class="day-badge closed-badge">Sabbath Prep</span>
+              </div>
+              <div class="time-col">Closed for Commercial Services</div>
+            </li>
+            <li class="schedule-row sabbath-day">
+              <div class="day-col">
+                <span class="day-name">Saturday (Sabbath)</span>
+                <span class="day-badge worship-badge">Church Worship</span>
+              </div>
+              <div class="time-col">Join us for Sabbath Worship! (9:30 AM)</div>
+            </li>
+          </ul>
+
+          <div class="schedule-footer">
+            <div class="live-clock-box">
+              <i class="fa-solid fa-clock"></i>
+              <span>Current Tulsa Time: <strong id="tulsaClock">--:-- --</strong></span>
+            </div>
+            <a href="#services" class="btn btn-sm btn-primary">Book Now</a>
+          </div>
+        </div>
+
+        <div class="hours-side-info">
+          <div class="info-card-highlight">
+            <div class="info-icon"><i class="fa-solid fa-bell"></i></div>
+            <h4>Pre-Orders & Advance Booking</h4>
+            <p>
+              You can submit your lawn mowing requests and food pre-orders anytime 24/7 through this website! 
+              Our youth coordinators process orders during our standard operating window.
+            </p>
+          </div>
+          <div class="info-card-highlight">
+            <div class="info-icon"><i class="fa-solid fa-phone-flip"></i></div>
+            <h4>Questions or Group Orders?</h4>
+            <p>
+              Need a large quantity of donuts or catering for a community event? Call or text Brother Mung at 
+              <a href="tel:9183464561"><strong>(918) 346-4561</strong></a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Information Section -->
+  <section class="section-padding bg-white" id="contact">
+    <div class="container">
+      <div class="section-heading text-center">
+        <div class="section-chip chip-contact">
+          <i class="fa-solid fa-envelope-open-text"></i> Get In Touch
+        </div>
+        <h2 class="section-title">Contact <span class="text-blue-gradient">Information</span></h2>
+        <p class="section-desc">
+          We would love to hear from you! Reach out with any inquiries regarding lawn mowing, food orders, 
+          or how you can support our youth ministry.
+        </p>
+      </div>
+
+      <div class="contact-layout-grid">
+        <!-- Contact Info Cards -->
+        <div class="contact-details-col">
+          <!-- Church Name & Address -->
+          <div class="contact-card">
+            <div class="contact-icon bg-blue-soft"><i class="fa-solid fa-church text-blue"></i></div>
+            <div class="contact-body">
+              <span class="contact-label">Church Organization</span>
+              <h3 class="contact-value">Zomi Sda Tulsa</h3>
+              <p class="contact-sub">Seventh-day Adventist Church Community</p>
+            </div>
+          </div>
+
+          <!-- Physical Address with Map Link -->
+          <div class="contact-card">
+            <div class="contact-icon bg-green-soft"><i class="fa-solid fa-map-location-dot text-green"></i></div>
+            <div class="contact-body">
+              <span class="contact-label">Address</span>
+              <h3 class="contact-value">1437 S 129th E Ave</h3>
+              <p class="contact-sub">Tulsa, OK 74108</p>
+              <a href="https://maps.google.com/?q=1437+S+129th+E+Ave,+Tulsa,+OK+74108" target="_blank" rel="noopener noreferrer" class="map-link-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in Google Maps
+              </a>
+            </div>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="contact-card">
+            <div class="contact-icon bg-amber-soft"><i class="fa-solid fa-phone-volume text-amber"></i></div>
+            <div class="contact-body">
+              <span class="contact-label">Phone & Text</span>
+              <h3 class="contact-value"><a href="tel:9183464561" class="text-link">(918) 346-4561</a></h3>
+              <p class="contact-sub">Available Sun–Thu, 8:00 AM – 4:00 PM</p>
+            </div>
+          </div>
+
+          <!-- Email Address -->
+          <div class="contact-card">
+            <div class="contact-icon bg-purple-soft"><i class="fa-solid fa-envelope text-purple"></i></div>
+            <div class="contact-body">
+              <span class="contact-label">Email Address</span>
+              <h3 class="contact-value"><a href="mailto:jkmungtawng2014@gmail.com" class="text-link">jkmungtawng2014@gmail.com</a></h3>
+              <p class="contact-sub">Send us an email anytime</p>
+            </div>
+          </div>
+
+          <!-- Facebook Link -->
+          <div class="contact-card">
+            <div class="contact-icon bg-fb-soft"><i class="fa-brands fa-facebook-f text-fb"></i></div>
+            <div class="contact-body">
+              <span class="contact-label">Facebook & Social</span>
+              <h3 class="contact-value">
+                <a href="https://www.facebook.com/zomisdatulsa" target="_blank" rel="noopener noreferrer" class="text-link">
+                  facebook.com/zomisdatulsa
+                </a>
+              </h3>
+              <p class="contact-sub">Follow our church news, photos & youth updates</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Message Contact Form & Interactive Map -->
+        <div class="contact-form-col">
+          <div class="contact-form-card">
+            <h3 class="form-title"><i class="fa-solid fa-paper-plane text-coral"></i> Send a Message</h3>
+            <p class="form-desc">Have a question or custom prayer request? Leave your message below and we will get back to you promptly!</p>
+
+            <form id="generalContactForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contactName" class="form-label">Your Name *</label>
+                  <input type="text" id="contactName" class="form-control" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                  <label for="contactPhone" class="form-label">Phone Number *</label>
+                  <input type="tel" id="contactPhone" class="form-control" placeholder="(918) 000-0000" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="contactEmail" class="form-label">Email Address *</label>
+                <input type="email" id="contactEmail" class="form-control" placeholder="john@example.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contactSubject" class="form-label">Subject</label>
+                <select id="contactSubject" class="form-control">
+                  <option value="Lawn Mowing Question">Lawn Mowing Question</option>
+                  <option value="Food Menu & Catering">Food Menu & Catering</option>
+                  <option value="Youth Ministry Donation">Youth Ministry Donation</option>
+                  <option value="General Church Inquiry">General Church Inquiry</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="contactMessage" class="form-label">Your Message *</label>
+                <textarea id="contactMessage" class="form-control" rows="4" placeholder="How can our youth team assist you?" required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block btn-lg">
+                <i class="fa-solid fa-paper-plane"></i> Send Message
+              </button>
+            </form>
+          </div>
+
+          <!-- Embedded Map Preview -->
+          <div class="map-container-card">
+            <div class="map-header">
+              <i class="fa-solid fa-location-crosshairs"></i>
+              <span>Church Location: 1437 S 129th E Ave, Tulsa, OK 74108</span>
+            </div>
+            <iframe 
+              src="https://maps.google.com/maps?q=1437+S+129th+E+Ave,+Tulsa,+OK+74108&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+              width="100%" 
+              height="200" 
+              style="border:0; border-radius: 0 0 16px 16px;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Zomi SDA Tulsa Church Location Map"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lawn-Mowing Booking Modal -->
+  <div class="modal-overlay" id="bookingModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon bg-green-light"><i class="fa-solid fa-scissors text-green"></i></div>
+          <div>
+            <h3 id="modalTitle">Book Lawn Mowing</h3>
+            <p class="modal-subtitle">ZAY Youth Community Lawn Care Service</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeBookingModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="lawnBookingForm">
+          <div class="booking-notice">
+            <i class="fa-solid fa-calendar-check text-green"></i>
+            <span>Operating Sunday–Thursday, 8:00 AM – 4:00 PM in Tulsa, OK.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="bookYardSize" class="form-label font-bold">Select Yard Size & Package *</label>
+            <select id="bookYardSize" class="form-control" required>
+              <option value="Small Yard - $40">Small Yard (Up to 0.25 Acre) — $40</option>
+              <option value="Medium Yard - $60" selected>Medium Yard (0.25 - 0.5 Acre) — $60</option>
+              <option value="Large Yard - $80">Large Yard (0.5+ Acre / Corner Lot) — $80</option>
+              <option value="Custom / Need Quote">Custom Property / Large Acreage Quote</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookName" class="form-label">Customer Name *</label>
+              <input type="text" id="bookName" class="form-control" placeholder="Your Full Name" required>
+            </div>
+            <div class="form-group">
+              <label for="bookPhone" class="form-label">Phone Number *</label>
+              <input type="tel" id="bookPhone" class="form-control" placeholder="(918) 346-4561" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bookEmail" class="form-label">Email Address *</label>
+            <input type="email" id="bookEmail" class="form-control" placeholder="yourname@gmail.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="bookAddress" class="form-label">Home Address in Tulsa *</label>
+            <input type="text" id="bookAddress" class="form-control" placeholder="1234 Elm Street, Tulsa, OK 74108" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookDate" class="form-label">Preferred Date * (Sun–Thu)</label>
+              <input type="date" id="bookDate" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="bookTime" class="form-label">Preferred Time Slot *</label>
+              <select id="bookTime" class="form-control" required>
+                <option value="Morning (8:00 AM - 12:00 PM)">Morning (8:00 AM - 12:00 PM)</option>
+                <option value="Afternoon (12:00 PM - 4:00 PM)">Afternoon (12:00 PM - 4:00 PM)</option>
+                <option value="Flexible / Any Time (8am-4pm)">Flexible (Anytime 8am - 4pm)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bookNotes" class="form-label">Additional Notes / Gate Codes / Pets</label>
+            <textarea id="bookNotes" class="form-control" rows="2" placeholder="e.g., Gate latch on left side, beware of dog, please avoid vegetable garden..."></textarea>
+          </div>
+
+          <div class="modal-footer-actions">
+            <button type="button" class="btn btn-outline" id="cancelBookingBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="fa-solid fa-check"></i> Confirm & Book Mowing
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Confirmation Success Modal -->
+  <div class="modal-overlay" id="successModal" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-sm text-center">
+      <div class="success-icon-wrap">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <h3 id="successModalTitle">Order Received Successfully!</h3>
+      <p id="successModalDesc">Thank you for supporting ZAY Youth Fundraiser. Our team has received your details and will contact you shortly.</p>
+      
+      <div class="confirmation-summary-box" id="confirmationSummaryBox">
+        <!-- Injected via JS -->
+      </div>
+
+      <div class="success-modal-actions">
+        <button type="button" class="btn btn-primary btn-block" id="closeSuccessModalBtn">
+          <i class="fa-solid fa-heart"></i> Return to Website
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Footer Section -->
+  <footer class="main-footer">
+    <div class="footer-top-wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+        <path d="M0,40L60,46.7C120,53,240,67,360,69.3C480,72,600,64,720,50.7C840,37,960,19,1080,18.7C1200,19,1320,37,1380,46.7L1440,56L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z" fill="#FFFFFF"></path>
+      </svg>
+    </div>
+
+    <div class="container footer-content">
+      <div class="footer-grid">
+        <!-- Col 1: Church Branding & Mission -->
+        <div class="footer-col footer-brand-col">
+          <div class="footer-logo">
+            <div class="logo-symbol-footer">
+              <img src="logo.webp" alt="Zomi SDA Church Logo" class="church-logo-img-footer">
+            </div>
+            <div>
+              <h3 class="footer-brand-title">ZAY YOUTH</h3>
+              <p class="footer-brand-sub">Zomi SDA Church Tulsa</p>
+            </div>
+          </div>
+          <p class="footer-about-text">
+            Empowering youth through faith, Christian discipleship, community service, and hardworking teamwork. 
+            All fundraiser proceeds directly benefit youth development.
+          </p>
+          <div class="thank-you-badge">
+            <i class="fa-solid fa-heart text-coral"></i>
+            <span>“Thank you for supporting ZAY Youth!”</span>
+          </div>
+        </div>
+
+        <!-- Col 2: Quick Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home"><i class="fa-solid fa-chevron-right"></i> Home</a></li>
+            <li><a href="#services"><i class="fa-solid fa-chevron-right"></i> Lawn Mowing Services</a></li>
+            <li><a href="#food-menu"><i class="fa-solid fa-chevron-right"></i> Food Menu & Order</a></li>
+            <li><a href="#about"><i class="fa-solid fa-chevron-right"></i> About Our Fundraiser</a></li>
+            <li><a href="#hours"><i class="fa-solid fa-chevron-right"></i> Operating Hours</a></li>
+            <li><a href="#contact"><i class="fa-solid fa-chevron-right"></i> Contact Information</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Operating Hours -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Business Hours</h4>
+          <div class="footer-hours-box">
+            <div class="footer-hours-item">
+              <span class="days">Sunday – Thursday:</span>
+              <span class="hours">8:00 a.m. – 4:00 p.m.</span>
+            </div>
+            <div class="footer-hours-item closed">
+              <span class="days">Friday & Saturday:</span>
+              <span class="hours">Closed for Sabbath Worship</span>
+            </div>
+          </div>
+          <div class="sabbath-invitation">
+            <i class="fa-solid fa-church"></i>
+            <div>
+              <strong>Join Us This Saturday!</strong>
+              <span>Sabbath School 9:30 AM | Worship 11:00 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 4: Contact & Socials -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Contact Details</h4>
+          <ul class="footer-contact-list">
+            <li>
+              <i class="fa-solid fa-location-dot"></i>
+              <span><strong>Zomi Sda Tulsa</strong><br>1437 S 129th E Ave, Tulsa, OK 74108</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-phone"></i>
+              <a href="tel:9183464561">(918) 346-4561</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-envelope"></i>
+              <a href="mailto:jkmungtawng2014@gmail.com">jkmungtawng2014@gmail.com</a>
+            </li>
+          </ul>
+
+          <div class="social-media-block">
+            <span class="social-label">Follow & Connect:</span>
+            <div class="social-links-grid">
+              <a href="https://www.facebook.com/zomisdatulsa" target="_blank" rel="noopener noreferrer" class="social-btn fb" aria-label="Zomi SDA Tulsa Facebook Page" title="Facebook">
+                <i class="fa-brands fa-facebook-f"></i>
+              </a>
+              <a href="https://maps.google.com/?q=1437+S+129th+E+Ave,+Tulsa,+OK+74108" target="_blank" rel="noopener noreferrer" class="social-btn map" aria-label="Google Maps Directions" title="Directions">
+                <i class="fa-solid fa-map-location-dot"></i>
+              </a>
+              <a href="mailto:jkmungtawng2014@gmail.com" class="social-btn mail" aria-label="Email ZAY Youth" title="Email Us">
+                <i class="fa-solid fa-envelope"></i>
+              </a>
+              <a href="tel:9183464561" class="social-btn call" aria-label="Call ZAY Youth" title="Call Us">
+                <i class="fa-solid fa-phone"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="footer-divider">
+
+      <!-- Footer Bottom Copyright & Thanks -->
+      <div class="footer-bottom">
+        <p class="copyright-text">
+          &copy; <span id="currentYear">2026</span> <strong>ZAY Youth Ministry</strong> — Zomi SDA Tulsa Church. All rights reserved.
+        </p>
+        <p class="footer-gratitude">
+          <i class="fa-solid fa-heart text-coral"></i> Made with faith, joy & dedication for our community.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+</body>
+</html>
