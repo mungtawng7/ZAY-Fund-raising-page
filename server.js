@@ -5,11 +5,16 @@ const crypto = require('crypto');
 const express = require('express');
 const Database = require('better-sqlite3');
 const Stripe = require('stripe');
+const notifications = require('./notifications');
 
 const app = express();
 const port = Number(process.env.PORT) || 8000;
 const baseUrl = (process.env.BASE_URL || `http://localhost:${port}`).replace(/\/$/, '');
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
+
+// Customers may cancel or add items within this window after placing an order.
+const EDIT_WINDOW_MS = 2 * 60 * 60 * 1000;
+const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 const dataDirectory = path.join(__dirname, 'data');
 const db = new Database(path.join(dataDirectory, 'zay-fundraiser.db'));
@@ -72,7 +77,38 @@ db.exec(`
     message TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    phone TEXT,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS sessions (
+    token TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    expires_at INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
 `);
+
+// Schema upgrades for databases created before these features existed.
+for (const statement of [
+  `ALTER TABLE food_orders ADD COLUMN status TEXT NOT NULL DEFAULT 'active'`,
+  `ALTER TABLE food_orders ADD COLUMN user_id INTEGER`,
+  `ALTER TABLE lawn_bookings ADD COLUMN status TEXT NOT NULL DEFAULT 'active'`,
+  `ALTER TABLE lawn_bookings ADD COLUMN user_id INTEGER`
+]) {
+  try {
+    db.exec(statement);
+  } catch (error) {
+    // Column already exists; safe to ignore.
+  }
+}
 
 const menu = {
   'africa-donuts': { name: 'Africa Donuts', priceCents: 300 },
@@ -110,9 +146,106 @@ const createMessage = db.prepare(`
   INSERT INTO contact_messages (id, name, email, phone, subject, message)
   VALUES (?, ?, ?, ?, ?, ?)
 `);
+const createUser = db.prepare(`
+  INSERT INTO users (name, email, phone, password_hash) VALUES (?, ?, ?, ?)
+`);
+const createSession = db.prepare(`
+  INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)
+`);
+const findUserByEmail = db.prepare(`SELECT * FROM users WHERE email = ?`);
+const findUserById = db.prepare(`SELECT id, name, email, phone, created_at FROM users WHERE id = ?`);
+const findSession = db.prepare(`SELECT * FROM sessions WHERE token = ?`);
+const deleteSession = db.prepare(`DELETE FROM sessions WHERE token = ?`);
 
 function createId(prefix) {
   return `${prefix}-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
+}
+
+// ==========================================
+// Authentication helpers
+// ==========================================
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+}
+
+function verifyPassword(password, stored) {
+  const [salt, hash] = String(stored || '').split(':');
+  if (!salt || !hash) return false;
+  const candidate = crypto.scryptSync(password, salt, 64);
+  const expected = Buffer.from(hash, 'hex');
+  return candidate.length === expected.length && crypto.timingSafeEqual(candidate, expected);
+}
+
+function getBearerToken(req) {
+  const header = req.get('authorization') || '';
+  return header.startsWith('Bearer ') ? header.slice(7).trim() : null;
+}
+
+function getSessionUser(req) {
+  const token = getBearerToken(req);
+  if (!token) return null;
+  const session = findSession.get(token);
+  if (!session) return null;
+  if (session.expires_at < Date.now()) {
+    deleteSession.run(token);
+    return null;
+  }
+  const user = findUserById.get(session.user_id);
+  return user ? { user, token } : null;
+}
+
+function requireAuth(req, res, next) {
+  const auth = getSessionUser(req);
+  if (!auth) {
+    return res.status(401).json({ error: 'Please sign in to continue.' });
+  }
+  req.user = auth.user;
+  req.sessionToken = auth.token;
+  next();
+}
+
+// Link any guest orders/bookings that used this email to the account.
+function claimGuestRecords(user) {
+  const email = user.email.toLowerCase();
+  db.prepare(`
+    UPDATE food_orders SET user_id = ?
+    WHERE user_id IS NULL AND customer_id IN (SELECT id FROM customers WHERE LOWER(email) = ?)
+  `).run(user.id, email);
+  db.prepare(`
+    UPDATE lawn_bookings SET user_id = ?
+    WHERE user_id IS NULL AND customer_id IN (SELECT id FROM customers WHERE LOWER(email) = ?)
+  `).run(user.id, email);
+}
+
+function publicUser(user) {
+  return { id: user.id, name: user.name, email: user.email, phone: user.phone || '' };
+}
+
+function issueSession(userId) {
+  const token = crypto.randomBytes(32).toString('hex');
+  createSession.run(token, userId, Date.now() + SESSION_TTL_MS);
+  return token;
+}
+
+// ==========================================
+// Two-hour edit window helpers
+// ==========================================
+function msSinceCreation(createdAt) {
+  // SQLite CURRENT_TIMESTAMP is UTC; append Z so Date parses it correctly.
+  return Date.now() - new Date(`${createdAt}Z`).getTime();
+}
+
+function assertWithinEditWindow(createdAt) {
+  const elapsed = msSinceCreation(createdAt);
+  if (elapsed > EDIT_WINDOW_MS) {
+    throw Object.assign(
+      new Error('The 2-hour change window for this order has ended. Please call (918) 346-4561 for help.'),
+      { statusCode: 403 }
+    );
+  }
+  return EDIT_WINDOW_MS - elapsed;
 }
 
 function requireText(value, name) {
@@ -165,7 +298,69 @@ app.get(['/admin', '/admin/'], (_req, res) => {
 });
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, paymentsConfigured: Boolean(stripe) });
+  res.json({
+    ok: true,
+    paymentsConfigured: Boolean(stripe),
+    emailConfigured: notifications.isEmailConfigured(),
+    smsConfigured: notifications.isSmsConfigured()
+  });
+});
+
+// ==========================================
+// User authentication routes
+// ==========================================
+app.post('/api/auth/signup', (req, res) => {
+  try {
+    const name = requireText(req.body.name, 'Name');
+    const email = requireText(req.body.email, 'Email').toLowerCase();
+    const phone = typeof req.body.phone === 'string' ? req.body.phone.trim() : '';
+    const password = String(req.body.password || '');
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error('Please enter a valid email address.');
+    }
+    if (password.length < 6) {
+      throw new Error('Password must be at least 6 characters long.');
+    }
+    if (findUserByEmail.get(email)) {
+      throw new Error('An account with this email already exists. Please sign in instead.');
+    }
+
+    const result = createUser.run(name, email, phone, hashPassword(password));
+    const user = findUserById.get(result.lastInsertRowid);
+    claimGuestRecords(user);
+    const token = issueSession(user.id);
+    return res.status(201).json({ token, user: publicUser(user) });
+  } catch (error) {
+    return sendValidationError(res, error);
+  }
+});
+
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const email = requireText(req.body.email, 'Email').toLowerCase();
+    const password = String(req.body.password || '');
+    const user = findUserByEmail.get(email);
+
+    if (!user || !verifyPassword(password, user.password_hash)) {
+      return res.status(401).json({ error: 'Incorrect email or password.' });
+    }
+
+    claimGuestRecords(user);
+    const token = issueSession(user.id);
+    return res.json({ token, user: publicUser(user) });
+  } catch (error) {
+    return sendValidationError(res, error);
+  }
+});
+
+app.post('/api/auth/logout', requireAuth, (req, res) => {
+  deleteSession.run(req.sessionToken);
+  res.json({ ok: true });
+});
+
+app.get('/api/auth/me', requireAuth, (req, res) => {
+  res.json({ user: publicUser(req.user) });
 });
 
 function requireAdmin(req, res, next) {
@@ -218,6 +413,7 @@ app.get('/api/admin/dashboard', requireAdmin, (_req, res) => {
 
 app.post('/api/orders', async (req, res) => {
   try {
+    const auth = getSessionUser(req);
     const name = requireText(req.body.name, 'Name');
     const email = requireText(req.body.email, 'Email');
     const phone = requireText(req.body.phone, 'Phone number');
@@ -257,14 +453,24 @@ app.post('/api/orders', async (req, res) => {
       for (const item of items) {
         createFoodItem.run(orderId, item.id, item.name, item.priceCents, item.quantity);
       }
+      if (auth) {
+        db.prepare('UPDATE food_orders SET user_id = ? WHERE id = ?').run(auth.user.id, orderId);
+      }
     });
     saveOrder();
+
+    // Notify the customer by email and SMS; never block the response on it.
+    const notificationStatus = await notifications.notifyOrderConfirmation({
+      name, email, phone, orderId, fulfillmentType, preferredTime, totalCents
+    });
 
     if (!stripe) {
       return res.status(201).json({
         orderId,
         paymentMode: 'unconfigured',
         totalCents,
+        notifications: notificationStatus,
+        editWindowHours: EDIT_WINDOW_MS / 3600000,
         message: 'Your order was saved. Online payment is not configured yet; please pay at pickup or delivery.'
       });
     }
@@ -309,14 +515,188 @@ app.post('/api/orders', async (req, res) => {
     });
 
     db.prepare('UPDATE food_orders SET stripe_checkout_session_id = ? WHERE id = ?').run(session.id, orderId);
-    return res.status(201).json({ orderId, paymentMode: 'stripe', checkoutUrl: session.url, totalCents });
+    return res.status(201).json({
+      orderId,
+      paymentMode: 'stripe',
+      checkoutUrl: session.url,
+      totalCents,
+      notifications: notificationStatus,
+      editWindowHours: EDIT_WINDOW_MS / 3600000
+    });
   } catch (error) {
     return sendValidationError(res, error);
   }
 });
 
-app.post('/api/bookings', (req, res) => {
+// ==========================================
+// Customer order management (2-hour window)
+// ==========================================
+app.get('/api/my/orders', requireAuth, (req, res) => {
+  const orders = db.prepare(`
+    SELECT o.*, c.name, c.email, c.phone, c.address
+    FROM food_orders o
+    JOIN customers c ON c.id = o.customer_id
+    WHERE o.user_id = ?
+    ORDER BY o.created_at DESC
+  `).all(req.user.id);
+
+  const itemStatement = db.prepare(`
+    SELECT item_id, item_name, unit_price_cents, quantity
+    FROM food_order_items WHERE order_id = ?
+  `);
+
+  const bookings = db.prepare(`
+    SELECT b.*, c.name, c.email, c.phone, c.address
+    FROM lawn_bookings b
+    JOIN customers c ON c.id = b.customer_id
+    WHERE b.user_id = ?
+    ORDER BY b.created_at DESC
+  `).all(req.user.id);
+
+  const decorate = record => {
+    const elapsed = msSinceCreation(record.created_at);
+    const remainingMs = Math.max(0, EDIT_WINDOW_MS - elapsed);
+    return {
+      ...record,
+      editable: record.status === 'active' && remainingMs > 0,
+      edit_remaining_ms: remainingMs
+    };
+  };
+
+  res.json({
+    orders: orders.map(order => ({ ...decorate(order), items: itemStatement.all(order.id) })),
+    bookings: bookings.map(decorate),
+    editWindowHours: EDIT_WINDOW_MS / 3600000
+  });
+});
+
+function getOwnedOrder(req, res) {
+  const order = db.prepare(`
+    SELECT o.*, c.name, c.email, c.phone
+    FROM food_orders o
+    JOIN customers c ON c.id = o.customer_id
+    WHERE o.id = ?
+  `).get(req.params.id);
+
+  if (!order || order.user_id !== req.user.id) {
+    res.status(404).json({ error: 'We could not find this order on your account.' });
+    return null;
+  }
+  return order;
+}
+
+app.post('/api/orders/:id/cancel', requireAuth, async (req, res) => {
   try {
+    const order = getOwnedOrder(req, res);
+    if (!order) return;
+    if (order.status === 'cancelled') {
+      throw new Error('This order has already been cancelled.');
+    }
+    assertWithinEditWindow(order.created_at);
+
+    db.prepare(`UPDATE food_orders SET status = 'cancelled' WHERE id = ?`).run(order.id);
+
+    const notificationStatus = await notifications.notifyOrderCancelled({
+      name: order.name, email: order.email, phone: order.phone, orderId: order.id
+    });
+
+    res.json({ ok: true, orderId: order.id, notifications: notificationStatus, message: 'Your order has been cancelled.' });
+  } catch (error) {
+    res.status(error.statusCode || 400).json({ error: error.message });
+  }
+});
+
+app.post('/api/orders/:id/add-items', requireAuth, async (req, res) => {
+  try {
+    const order = getOwnedOrder(req, res);
+    if (!order) return;
+    if (order.status === 'cancelled') {
+      throw new Error('This order has been cancelled and can no longer be changed.');
+    }
+    assertWithinEditWindow(order.created_at);
+
+    if (!Array.isArray(req.body.items) || req.body.items.length === 0) {
+      throw new Error('Add at least one food item.');
+    }
+
+    const items = req.body.items.map(({ id, quantity }) => {
+      const item = menu[id];
+      const validQuantity = Number(quantity);
+      if (!item || !Number.isInteger(validQuantity) || validQuantity < 1 || validQuantity > 50) {
+        throw new Error('One or more food items or quantities are not valid.');
+      }
+      return { id, ...item, quantity: validQuantity };
+    });
+
+    const addedCents = items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
+    const newSubtotal = order.subtotal_cents + addedCents;
+    const newTotal = newSubtotal + order.delivery_fee_cents + order.donation_cents;
+
+    const applyChanges = db.transaction(() => {
+      const updateItem = db.prepare(`
+        UPDATE food_order_items SET quantity = quantity + ? WHERE order_id = ? AND item_id = ?
+      `);
+      for (const item of items) {
+        const updated = updateItem.run(item.quantity, order.id, item.id);
+        if (updated.changes === 0) {
+          createFoodItem.run(order.id, item.id, item.name, item.priceCents, item.quantity);
+        }
+      }
+      db.prepare(`
+        UPDATE food_orders SET subtotal_cents = ?, total_cents = ? WHERE id = ?
+      `).run(newSubtotal, newTotal, order.id);
+    });
+    applyChanges();
+
+    const notificationStatus = await notifications.notifyOrderUpdated({
+      name: order.name, email: order.email, phone: order.phone, orderId: order.id, totalCents: newTotal
+    });
+
+    res.json({
+      ok: true,
+      orderId: order.id,
+      subtotalCents: newSubtotal,
+      totalCents: newTotal,
+      notifications: notificationStatus,
+      message: 'Your items were added to the order.'
+    });
+  } catch (error) {
+    res.status(error.statusCode || 400).json({ error: error.message });
+  }
+});
+
+app.post('/api/bookings/:id/cancel', requireAuth, async (req, res) => {
+  try {
+    const booking = db.prepare(`
+      SELECT b.*, c.name, c.email, c.phone
+      FROM lawn_bookings b
+      JOIN customers c ON c.id = b.customer_id
+      WHERE b.id = ?
+    `).get(req.params.id);
+
+    if (!booking || booking.user_id !== req.user.id) {
+      return res.status(404).json({ error: 'We could not find this booking on your account.' });
+    }
+    if (booking.status === 'cancelled') {
+      throw new Error('This booking has already been cancelled.');
+    }
+    assertWithinEditWindow(booking.created_at);
+
+    db.prepare(`UPDATE lawn_bookings SET status = 'cancelled' WHERE id = ?`).run(booking.id);
+
+    const notificationStatus = await notifications.notifyBookingCancelled({
+      name: booking.name, email: booking.email, phone: booking.phone, bookingId: booking.id
+    });
+
+    res.json({ ok: true, bookingId: booking.id, notifications: notificationStatus, message: 'Your booking has been cancelled.' });
+  } catch (error) {
+    res.status(error.statusCode || 400).json({ error: error.message });
+  }
+});
+
+app.post('/api/bookings', async (req, res) => {
+  try {
+    const auth = getSessionUser(req);
     const name = requireText(req.body.name, 'Name');
     const email = requireText(req.body.email, 'Email');
     const phone = requireText(req.body.phone, 'Phone number');
@@ -340,10 +720,19 @@ app.post('/api/bookings', (req, res) => {
       bookingId, customer.lastInsertRowid, yardSize, preferredDate, preferredTime,
       notes, lawnPrices[yardSize]
     );
+    if (auth) {
+      db.prepare('UPDATE lawn_bookings SET user_id = ? WHERE id = ?').run(auth.user.id, bookingId);
+    }
+
+    const notificationStatus = await notifications.notifyBookingConfirmation({
+      name, email, phone, bookingId, yardSize, preferredDate, preferredTime
+    });
 
     return res.status(201).json({
       bookingId,
       estimatedPriceCents: lawnPrices[yardSize],
+      notifications: notificationStatus,
+      editWindowHours: EDIT_WINDOW_MS / 3600000,
       message: 'Your booking was saved. The youth team will confirm the appointment and payment details.'
     });
   } catch (error) {
@@ -369,4 +758,6 @@ app.post('/api/messages', (req, res) => {
 app.listen(port, () => {
   console.log(`ZAY Youth Fundraiser is running at ${baseUrl}`);
   console.log(stripe ? 'Stripe payments are enabled.' : 'Stripe is not configured: food orders will be saved as payment pending.');
+  console.log(notifications.isEmailConfigured() ? 'Email notifications are enabled.' : 'Email is not configured: notifications will be logged to the console.');
+  console.log(notifications.isSmsConfigured() ? 'SMS notifications are enabled.' : 'SMS is not configured: notifications will be logged to the console.');
 });

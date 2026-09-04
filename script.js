@@ -82,6 +82,58 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentYearEl = document.getElementById('currentYear');
   const generalContactForm = document.getElementById('generalContactForm');
 
+  // Auth & Account UI
+  const accountBtn = document.getElementById('accountBtn');
+  const accountBtnLabel = document.getElementById('accountBtnLabel');
+  const accountDropdown = document.getElementById('accountDropdown');
+  const accountName = document.getElementById('accountName');
+  const accountEmail = document.getElementById('accountEmail');
+  const myOrdersBtn = document.getElementById('myOrdersBtn');
+  const signOutBtn = document.getElementById('signOutBtn');
+  const authModal = document.getElementById('authModal');
+  const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
+  const signInTab = document.getElementById('signInTab');
+  const signUpTab = document.getElementById('signUpTab');
+  const signInForm = document.getElementById('signInForm');
+  const signUpForm = document.getElementById('signUpForm');
+  const myOrdersModal = document.getElementById('myOrdersModal');
+  const closeMyOrdersModalBtn = document.getElementById('closeMyOrdersModalBtn');
+  const myOrdersLoading = document.getElementById('myOrdersLoading');
+  const myOrdersList = document.getElementById('myOrdersList');
+
+  const sessionStorageKey = 'zayAuthToken';
+  let currentUser = null;
+  let countdownInterval = null;
+
+  // ==========================================
+  // 2b. Dark Mode Toggle
+  // ==========================================
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const themeToggleIcon = document.getElementById('themeToggleIcon');
+  const themeStorageKey = 'zayTheme';
+
+  function syncThemeIcon() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (themeToggleIcon) {
+      themeToggleIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    }
+    if (themeToggleBtn) {
+      themeToggleBtn.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+  }
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const next = isDark ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(themeStorageKey, next);
+      syncThemeIcon();
+      showToast(next === 'dark' ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+    });
+    syncThemeIcon();
+  }
+
   // Set current year
   if (currentYearEl) {
     currentYearEl.textContent = new Date().getFullYear();
@@ -365,6 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         showFoodConfirmation(result.orderId, customerName, fulfillmentType, preferredTime, result.totalCents, result.message);
         resetFoodOrder();
+        notifyDeliveryToast(result.notifications);
         openModal(successModal);
       } catch (error) {
         showToast(error.message, 'warning');
@@ -443,6 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
         }
         lawnBookingForm.reset();
+        notifyDeliveryToast(result.notifications);
         openModal(successModal);
       } catch (error) {
         showToast(error.message, 'warning');
@@ -477,11 +531,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  async function apiRequest(endpoint, payload) {
+  async function apiRequest(endpoint, payload, options = {}) {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = localStorage.getItem(sessionStorageKey);
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      method: options.method || 'POST',
+      headers,
+      body: options.method === 'GET' ? undefined : JSON.stringify(payload)
     });
     const result = await response.json().catch(() => ({}));
 
@@ -489,6 +547,400 @@ document.addEventListener('DOMContentLoaded', () => {
       throw new Error(result.error || 'We could not process your request. Please try again.');
     }
     return result;
+  }
+
+  // ==========================================
+  // 5b. User Authentication & Account UI
+  // ==========================================
+  function getToken() {
+    return localStorage.getItem(sessionStorageKey);
+  }
+
+  function setAuthSession(token, user) {
+    if (token) {
+      localStorage.setItem(sessionStorageKey, token);
+    } else {
+      localStorage.removeItem(sessionStorageKey);
+    }
+    currentUser = user;
+    renderAccountUI();
+    prefillCustomerForms();
+  }
+
+  function renderAccountUI() {
+    if (!accountBtn) return;
+    if (currentUser) {
+      accountBtnLabel.textContent = currentUser.name.split(' ')[0];
+      if (accountName) accountName.textContent = currentUser.name;
+      if (accountEmail) accountEmail.textContent = currentUser.email;
+    } else {
+      accountBtnLabel.textContent = 'Sign In';
+      if (accountDropdown) accountDropdown.hidden = true;
+    }
+  }
+
+  function prefillCustomerForms() {
+    if (!currentUser) return;
+    const mapping = [
+      ['foodCustomerName', currentUser.name],
+      ['foodCustomerEmail', currentUser.email],
+      ['foodCustomerPhone', currentUser.phone],
+      ['bookName', currentUser.name],
+      ['bookEmail', currentUser.email],
+      ['bookPhone', currentUser.phone]
+    ];
+    mapping.forEach(([id, value]) => {
+      const field = document.getElementById(id);
+      if (field && value && !field.value) field.value = value;
+    });
+  }
+
+  function switchAuthTab(tab) {
+    const showSignIn = tab === 'signin';
+    if (signInTab) signInTab.classList.toggle('active', showSignIn);
+    if (signUpTab) signUpTab.classList.toggle('active', !showSignIn);
+    if (signInForm) signInForm.hidden = !showSignIn;
+    if (signUpForm) signUpForm.hidden = showSignIn;
+  }
+
+  if (accountBtn) {
+    accountBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentUser) {
+        accountDropdown.hidden = !accountDropdown.hidden;
+      } else {
+        switchAuthTab('signin');
+        openModal(authModal);
+      }
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (accountDropdown && !accountDropdown.hidden &&
+        !accountDropdown.contains(e.target) && e.target !== accountBtn) {
+      accountDropdown.hidden = true;
+    }
+  });
+
+  if (signInTab) signInTab.addEventListener('click', () => switchAuthTab('signin'));
+  if (signUpTab) signUpTab.addEventListener('click', () => switchAuthTab('signup'));
+  document.querySelectorAll('[data-switch-tab]').forEach(btn => {
+    btn.addEventListener('click', () => switchAuthTab(btn.getAttribute('data-switch-tab')));
+  });
+  if (closeAuthModalBtn) closeAuthModalBtn.addEventListener('click', () => closeModal(authModal));
+
+  if (signInForm) {
+    signInForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitButton = document.getElementById('signInSubmitBtn');
+      setButtonLoading(submitButton, 'Signing in...');
+      try {
+        const result = await apiRequest('/api/auth/login', {
+          email: document.getElementById('signInEmail').value.trim(),
+          password: document.getElementById('signInPassword').value
+        });
+        setAuthSession(result.token, result.user);
+        closeModal(authModal);
+        signInForm.reset();
+        showToast(`Welcome back, ${result.user.name.split(' ')[0]}!`, 'success');
+      } catch (error) {
+        showToast(error.message, 'warning');
+      } finally {
+        resetButtonLoading(submitButton);
+      }
+    });
+  }
+
+  if (signUpForm) {
+    signUpForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitButton = document.getElementById('signUpSubmitBtn');
+      setButtonLoading(submitButton, 'Creating account...');
+      try {
+        const result = await apiRequest('/api/auth/signup', {
+          name: document.getElementById('signUpName').value.trim(),
+          email: document.getElementById('signUpEmail').value.trim(),
+          phone: document.getElementById('signUpPhone').value.trim(),
+          password: document.getElementById('signUpPassword').value
+        });
+        setAuthSession(result.token, result.user);
+        closeModal(authModal);
+        signUpForm.reset();
+        showToast(`Account created. Welcome, ${result.user.name.split(' ')[0]}!`, 'success');
+      } catch (error) {
+        showToast(error.message, 'warning');
+      } finally {
+        resetButtonLoading(submitButton);
+      }
+    });
+  }
+
+  if (signOutBtn) {
+    signOutBtn.addEventListener('click', async () => {
+      try {
+        await apiRequest('/api/auth/logout', {});
+      } catch (error) {
+        // Session may already be gone; sign out locally anyway.
+      }
+      setAuthSession(null, null);
+      showToast('You have been signed out.', 'info');
+    });
+  }
+
+  // Restore session on page load
+  (async function restoreSession() {
+    if (!getToken()) return;
+    try {
+      const result = await apiRequest('/api/auth/me', {}, { method: 'GET' });
+      setAuthSession(getToken(), result.user);
+    } catch (error) {
+      setAuthSession(null, null);
+    }
+  })();
+
+  // ==========================================
+  // 5c. My Orders: Cancel & Add More (2-hour window)
+  // ==========================================
+  function formatRemaining(ms) {
+    const totalMinutes = Math.floor(ms / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+  }
+
+  function formatDateTime(value) {
+    return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+      .format(new Date(`${value}Z`));
+  }
+
+  function orderItemsText(items) {
+    return (items || []).map(i => `${i.quantity}x ${i.item_name}`).join(', ');
+  }
+
+  function orderCardHtml(order) {
+    const editableBlock = order.editable ? `
+      <div class="edit-window-bar">
+        <span class="edit-countdown" data-countdown-for="${order.id}" data-expires="${Date.parse(order.created_at + 'Z') + 2 * 3600000}">
+          <i class="fa-solid fa-hourglass-half"></i> Changes allowed for ${formatRemaining(order.edit_remaining_ms)}
+        </span>
+      </div>
+      <div class="order-actions">
+        <button type="button" class="btn btn-sm btn-outline" onclick="window.startAddItems('${order.id}')">
+          <i class="fa-solid fa-plus"></i> Add More Items
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="window.cancelOrder('${order.id}')">
+          <i class="fa-solid fa-xmark"></i> Cancel Order
+        </button>
+      </div>
+      <div class="add-items-panel" id="addItems-${order.id}" hidden>
+        <p class="add-items-title"><i class="fa-solid fa-utensils"></i> Add more items to this order:</p>
+        ${Object.values(menuItems).map(item => `
+          <div class="add-items-row">
+            <span>${item.name} ($${item.price.toFixed(2)})</span>
+            <div class="qty-selector">
+              <button type="button" class="qty-btn" onclick="window.adjustAddItemQty('${order.id}', '${item.id}', -1)">-</button>
+              <input type="number" class="qty-input" id="addqty-${order.id}-${item.id}" value="0" min="0" max="50" readonly>
+              <button type="button" class="qty-btn" onclick="window.adjustAddItemQty('${order.id}', '${item.id}', 1)">+</button>
+            </div>
+          </div>
+        `).join('')}
+        <div class="add-items-actions">
+          <button type="button" class="btn btn-sm btn-primary" onclick="window.submitAddItems('${order.id}')">
+            <i class="fa-solid fa-check"></i> Confirm Add Items
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" onclick="window.cancelAddItems('${order.id}')">Close</button>
+        </div>
+      </div>` : '';
+
+    const expiredBlock = (!order.editable && order.status === 'active') ? `
+      <div class="edit-window-bar expired">
+        <span><i class="fa-solid fa-lock"></i> 2-hour change window ended. Call (918) 346-4561 for changes.</span>
+      </div>` : '';
+
+    return `
+      <article class="my-order-card ${order.status === 'cancelled' ? 'cancelled' : ''}">
+        <div class="my-order-head">
+          <div>
+            <strong class="my-order-id">#${order.id}</strong>
+            <span class="my-order-date">${formatDateTime(order.created_at)}</span>
+          </div>
+          <span class="status-badge ${order.status}">${order.status}</span>
+        </div>
+        <p class="my-order-items">${escapeHtml(orderItemsText(order.items))}</p>
+        <div class="my-order-meta">
+          <span><i class="fa-solid fa-${order.fulfillment_type === 'delivery' ? 'car-side' : 'store'}"></i> ${order.fulfillment_type}</span>
+          <span><i class="fa-solid fa-clock"></i> ${escapeHtml(order.preferred_time)}</span>
+          <span class="my-order-total">$${(order.total_cents / 100).toFixed(2)}</span>
+        </div>
+        ${editableBlock}
+        ${expiredBlock}
+      </article>`;
+  }
+
+  function bookingCardHtml(booking) {
+    const editableBlock = booking.editable ? `
+      <div class="edit-window-bar">
+        <span class="edit-countdown" data-countdown-for="${booking.id}" data-expires="${Date.parse(booking.created_at + 'Z') + 2 * 3600000}">
+          <i class="fa-solid fa-hourglass-half"></i> Cancellation allowed for ${formatRemaining(booking.edit_remaining_ms)}
+        </span>
+      </div>
+      <div class="order-actions">
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="window.cancelBooking('${booking.id}')">
+          <i class="fa-solid fa-xmark"></i> Cancel Booking
+        </button>
+      </div>` : '';
+
+    return `
+      <article class="my-order-card ${booking.status === 'cancelled' ? 'cancelled' : ''}">
+        <div class="my-order-head">
+          <div>
+            <strong class="my-order-id">#${booking.id}</strong>
+            <span class="my-order-date">${formatDateTime(booking.created_at)}</span>
+          </div>
+          <span class="status-badge ${booking.status}">${booking.status}</span>
+        </div>
+        <p class="my-order-items">${escapeHtml(booking.yard_size)} — Lawn Mowing</p>
+        <div class="my-order-meta">
+          <span><i class="fa-solid fa-calendar"></i> ${escapeHtml(booking.preferred_date)}</span>
+          <span><i class="fa-solid fa-clock"></i> ${escapeHtml(booking.preferred_time)}</span>
+        </div>
+        ${editableBlock}
+      </article>`;
+  }
+
+  async function loadMyOrders() {
+    if (!myOrdersList) return;
+    if (myOrdersLoading) myOrdersLoading.style.display = 'block';
+    myOrdersList.innerHTML = '';
+    try {
+      const result = await apiRequest('/api/my/orders', {}, { method: 'GET' });
+      const cards = [
+        ...result.orders.map(orderCardHtml),
+        ...result.bookings.map(bookingCardHtml)
+      ];
+      myOrdersList.innerHTML = cards.length
+        ? cards.join('')
+        : '<p class="empty-state">You have no orders or bookings yet. Place one and it will appear here!</p>';
+      startCountdownTicker();
+    } catch (error) {
+      myOrdersList.innerHTML = `<p class="empty-state">${escapeHtml(error.message)}</p>`;
+    } finally {
+      if (myOrdersLoading) myOrdersLoading.style.display = 'none';
+    }
+  }
+
+  function startCountdownTicker() {
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+      const countdowns = document.querySelectorAll('[data-expires]');
+      if (countdowns.length === 0) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+        return;
+      }
+      let anyExpired = false;
+      countdowns.forEach(el => {
+        const remaining = Number(el.getAttribute('data-expires')) - Date.now();
+        if (remaining <= 0) {
+          anyExpired = true;
+        } else {
+          const verb = el.textContent.includes('Cancellation') ? 'Cancellation allowed for' : 'Changes allowed for';
+          el.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> ${verb} ${formatRemaining(remaining)}`;
+        }
+      });
+      // Reload the list so expired windows lock their buttons.
+      if (anyExpired) loadMyOrders();
+    }, 30000);
+  }
+
+  if (myOrdersBtn) {
+    myOrdersBtn.addEventListener('click', () => {
+      if (accountDropdown) accountDropdown.hidden = true;
+      openModal(myOrdersModal);
+      loadMyOrders();
+    });
+  }
+  if (closeMyOrdersModalBtn) {
+    closeMyOrdersModalBtn.addEventListener('click', () => closeModal(myOrdersModal));
+  }
+
+  window.cancelOrder = async function(orderId) {
+    if (!confirm(`Cancel order ${orderId}? This cannot be undone.`)) return;
+    try {
+      const result = await apiRequest(`/api/orders/${orderId}/cancel`, {});
+      showToast(result.message || 'Order cancelled.', 'success');
+      notifyDeliveryToast(result.notifications);
+      loadMyOrders();
+    } catch (error) {
+      showToast(error.message, 'warning');
+      loadMyOrders();
+    }
+  };
+
+  window.cancelBooking = async function(bookingId) {
+    if (!confirm(`Cancel booking ${bookingId}? This cannot be undone.`)) return;
+    try {
+      const result = await apiRequest(`/api/bookings/${bookingId}/cancel`, {});
+      showToast(result.message || 'Booking cancelled.', 'success');
+      notifyDeliveryToast(result.notifications);
+      loadMyOrders();
+    } catch (error) {
+      showToast(error.message, 'warning');
+      loadMyOrders();
+    }
+  };
+
+  window.startAddItems = function(orderId) {
+    const panel = document.getElementById(`addItems-${orderId}`);
+    if (panel) panel.hidden = false;
+  };
+
+  window.cancelAddItems = function(orderId) {
+    const panel = document.getElementById(`addItems-${orderId}`);
+    if (panel) {
+      panel.querySelectorAll('.qty-input').forEach(input => { input.value = 0; });
+      panel.hidden = true;
+    }
+  };
+
+  window.adjustAddItemQty = function(orderId, itemId, delta) {
+    const input = document.getElementById(`addqty-${orderId}-${itemId}`);
+    if (!input) return;
+    const next = Math.min(50, Math.max(0, (parseInt(input.value, 10) || 0) + delta));
+    input.value = next;
+  };
+
+  window.submitAddItems = async function(orderId) {
+    const panel = document.getElementById(`addItems-${orderId}`);
+    if (!panel) return;
+    const items = Object.keys(menuItems)
+      .map(id => ({ id, quantity: parseInt(document.getElementById(`addqty-${orderId}-${id}`)?.value, 10) || 0 }))
+      .filter(item => item.quantity > 0);
+
+    if (items.length === 0) {
+      showToast('Choose at least one item to add.', 'warning');
+      return;
+    }
+
+    try {
+      const result = await apiRequest(`/api/orders/${orderId}/add-items`, { items });
+      showToast(`Items added! New total: $${(result.totalCents / 100).toFixed(2)}`, 'success');
+      notifyDeliveryToast(result.notifications);
+      loadMyOrders();
+    } catch (error) {
+      showToast(error.message, 'warning');
+      loadMyOrders();
+    }
+  };
+
+  function notifyDeliveryToast(notifications) {
+    if (!notifications) return;
+    const channels = [];
+    if (notifications.emailSent) channels.push('email');
+    if (notifications.smsSent) channels.push('SMS');
+    if (channels.length) {
+      showToast(`Confirmation sent via ${channels.join(' & ')}.`, 'info');
+    }
   }
 
   function setButtonLoading(button, label) {

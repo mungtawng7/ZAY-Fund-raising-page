@@ -59,7 +59,7 @@ function renderOrders(orders) {
       <td>${safe(order.items)}</td>
       <td>${safe(order.fulfillment_type)}${order.address ? `<small>${safe(order.address)}</small>` : ''}</td>
       <td><strong>${money(order.total_cents)}</strong><small>Donation: ${money(order.donation_cents)}</small></td>
-      <td>${statusBadge(order.payment_status)}</td>
+      <td>${statusBadge(order.payment_status)} ${statusBadge(order.status || 'active')}</td>
       <td>${dateTime(order.created_at)}</td>
     </tr>`).join('') : emptyRow(7, 'No food orders yet.');
 }
@@ -73,7 +73,7 @@ function renderBookings(bookings) {
       <td>${safe(booking.yard_size)}</td>
       <td><strong>${safe(booking.preferred_date)}</strong><small>${safe(booking.preferred_time)}</small></td>
       <td>${booking.estimated_price_cents ? money(booking.estimated_price_cents) : 'Quote needed'}</td>
-      <td>${statusBadge(booking.payment_status)}</td>
+      <td>${statusBadge(booking.payment_status)} ${statusBadge(booking.status || 'active')}</td>
     </tr>`).join('') : emptyRow(7, 'No lawn bookings yet.');
 }
 

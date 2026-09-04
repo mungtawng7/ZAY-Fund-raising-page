@@ -26,6 +26,15 @@
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Apply saved theme before first paint to avoid a flash -->
+  <script>
+    (function () {
+      var saved = localStorage.getItem('zayTheme');
+      var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
 </head>
 <body>
 
@@ -80,6 +89,34 @@
           <span class="cart-btn-label">Order</span>
           <span class="cart-count-badge" id="cartCountBadge">0</span>
         </button>
+
+        <!-- Dark Mode Toggle -->
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <i class="fa-solid fa-moon" id="themeToggleIcon"></i>
+        </button>
+
+        <!-- User Account Button -->
+        <button class="account-btn" id="accountBtn" aria-label="Sign in or create an account" title="Account">
+          <i class="fa-solid fa-circle-user"></i>
+          <span class="account-btn-label" id="accountBtnLabel">Sign In</span>
+        </button>
+
+        <!-- Account Dropdown (shown when signed in) -->
+        <div class="account-dropdown" id="accountDropdown" hidden>
+          <div class="account-dropdown-head">
+            <i class="fa-solid fa-circle-user"></i>
+            <div>
+              <strong id="accountName">Guest</strong>
+              <span id="accountEmail"></span>
+            </div>
+          </div>
+          <button type="button" class="account-dropdown-item" id="myOrdersBtn">
+            <i class="fa-solid fa-receipt"></i> My Orders &amp; Bookings
+          </button>
+          <button type="button" class="account-dropdown-item" id="signOutBtn">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+          </button>
+        </div>
 
         <!-- Book Now Primary Action -->
         <a href="#services" class="btn btn-primary btn-nav-book">
@@ -431,7 +468,7 @@
                 <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity" data-target="qty-africa-donuts">+</button>
               </div>
               <button class="btn btn-add-order add-to-cart-btn" data-id="africa-donuts" data-name="Africa Donuts" data-price="3">
-                <i class="fa-solid fa-cart-plus"></i> Add to Order ($3)
+                <i class="fa-solid fa-cart-plus"></i> Add ($3)
               </button>
             </div>
           </div>
@@ -469,7 +506,7 @@
                 <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity" data-target="qty-shwe-yin-aye">+</button>
               </div>
               <button class="btn btn-add-order add-to-cart-btn" data-id="shwe-yin-aye" data-name="Shwe Yin Aye" data-price="5">
-                <i class="fa-solid fa-cart-plus"></i> Add to Order ($5)
+                <i class="fa-solid fa-cart-plus"></i> Add ($5)
               </button>
             </div>
           </div>
@@ -507,7 +544,7 @@
                 <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity" data-target="qty-fried-rice">+</button>
               </div>
               <button class="btn btn-add-order add-to-cart-btn" data-id="fried-rice" data-name="Fried Rice" data-price="10">
-                <i class="fa-solid fa-cart-plus"></i> Add to Order ($10)
+                <i class="fa-solid fa-cart-plus"></i> Add ($10)
               </button>
             </div>
           </div>
@@ -545,7 +582,7 @@
                 <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity" data-target="qty-fruit-juice">+</button>
               </div>
               <button class="btn btn-add-order add-to-cart-btn" data-id="fruit-juice" data-name="Fruit Juice" data-price="4">
-                <i class="fa-solid fa-cart-plus"></i> Add to Order ($4)
+                <i class="fa-solid fa-cart-plus"></i> Add ($4)
               </button>
             </div>
           </div>
@@ -1115,6 +1152,96 @@
 
   <!-- Toast Notification System -->
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Sign In / Sign Up Modal -->
+  <div class="modal-overlay" id="authModal" aria-hidden="true" role="dialog" aria-labelledby="authModalTitle">
+    <div class="modal-dialog modal-dialog-sm">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon bg-purple-light"><i class="fa-solid fa-circle-user text-purple"></i></div>
+          <div>
+            <h3 id="authModalTitle">Your ZAY Account</h3>
+            <p class="modal-subtitle">Track, cancel, or add to orders within 2 hours</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeAuthModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="auth-tabs" role="tablist">
+          <button type="button" class="auth-tab active" id="signInTab" role="tab">Sign In</button>
+          <button type="button" class="auth-tab" id="signUpTab" role="tab">Sign Up</button>
+        </div>
+
+        <form id="signInForm" class="auth-form">
+          <div class="form-group">
+            <label for="signInEmail" class="form-label">Email Address *</label>
+            <input type="email" id="signInEmail" class="form-control" placeholder="yourname@gmail.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="signInPassword" class="form-label">Password *</label>
+            <input type="password" id="signInPassword" class="form-control" placeholder="Your password" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="signInSubmitBtn">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In
+          </button>
+          <p class="auth-switch-note">New here? <button type="button" class="link-btn" data-switch-tab="signup">Create a free account</button></p>
+        </form>
+
+        <form id="signUpForm" class="auth-form" hidden>
+          <div class="form-group">
+            <label for="signUpName" class="form-label">Full Name *</label>
+            <input type="text" id="signUpName" class="form-control" placeholder="Your Full Name" required autocomplete="name">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="signUpEmail" class="form-label">Email Address *</label>
+              <input type="email" id="signUpEmail" class="form-control" placeholder="yourname@gmail.com" required autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="signUpPhone" class="form-label">Phone Number</label>
+              <input type="tel" id="signUpPhone" class="form-control" placeholder="(918) 000-0000" autocomplete="tel">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signUpPassword" class="form-label">Create Password *</label>
+            <input type="password" id="signUpPassword" class="form-control" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="signUpSubmitBtn">
+            <i class="fa-solid fa-user-plus"></i> Create Account
+          </button>
+          <p class="auth-switch-note">Already have an account? <button type="button" class="link-btn" data-switch-tab="signin">Sign in</button></p>
+        </form>
+
+        <p class="auth-benefit-note">
+          <i class="fa-solid fa-bell"></i> Signed-in customers receive email &amp; SMS confirmations and can cancel or add items within 2 hours of ordering.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Orders & Bookings Modal -->
+  <div class="modal-overlay" id="myOrdersModal" aria-hidden="true" role="dialog" aria-labelledby="myOrdersTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon bg-green-light"><i class="fa-solid fa-receipt text-green"></i></div>
+          <div>
+            <h3 id="myOrdersTitle">My Orders &amp; Bookings</h3>
+            <p class="modal-subtitle">Cancel or add items within 2 hours of placing an order</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeMyOrdersModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="my-orders-loading" id="myOrdersLoading">
+          <i class="fa-solid fa-spinner fa-spin"></i> Loading your orders...
+        </div>
+        <div class="my-orders-list" id="myOrdersList"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer Section -->
   <footer class="main-footer">
