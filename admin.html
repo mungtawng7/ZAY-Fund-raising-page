@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ZAY Youth | Fundraiser Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="admin-shell">
+    <section class="login-card" id="loginScreen">
+      <div class="login-mark"><img src="logo.webp" alt="Zomi SDA Church logo"></div>
+      <p class="eyebrow">Zomi SDA Tulsa</p>
+      <h1>Fundraiser Admin</h1>
+      <p class="login-copy">Sign in to review orders, payments, bookings, and customer messages.</p>
+      <form id="loginForm">
+        <label for="adminPassword">Admin password</label>
+        <div class="password-field">
+          <input id="adminPassword" type="password" autocomplete="current-password" required>
+          <button type="button" id="togglePassword" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
+        </div>
+        <p class="form-error" id="loginError" role="alert"></p>
+        <button class="primary-button" type="submit"><i class="fa-solid fa-lock"></i> Open dashboard</button>
+      </form>
+      <a class="back-link" href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to fundraiser site</a>
+    </section>
+
+    <section class="dashboard" id="dashboard" hidden>
+      <header class="dashboard-header">
+        <div class="header-brand">
+          <img src="logo.webp" alt="Zomi SDA Church logo">
+          <div><span>Zomi SDA Tulsa</span><strong>ZAY Fundraiser Admin</strong></div>
+        </div>
+        <div class="header-actions">
+          <a class="stripe-link" href="https://dashboard.stripe.com/payments" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-stripe"></i> Stripe Dashboard</a>
+          <button class="icon-button" id="refreshButton" title="Refresh dashboard" aria-label="Refresh dashboard"><i class="fa-solid fa-rotate"></i></button>
+          <button class="logout-button" id="logoutButton"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</button>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="dashboard-title-row">
+          <div><p class="eyebrow">Live fundraising activity</p><h1>Orders & payments</h1></div>
+          <span class="stripe-state" id="stripeState"><i class="fa-solid fa-circle"></i> Checking Stripe</span>
+        </div>
+
+        <section class="metric-grid" aria-label="Order summary">
+          <article class="metric-card"><span>Orders received</span><strong id="orderCount">0</strong><i class="fa-solid fa-receipt"></i></article>
+          <article class="metric-card paid"><span>Paid through Stripe</span><strong id="paidTotal">$0.00</strong><i class="fa-solid fa-circle-check"></i></article>
+          <article class="metric-card pending"><span>Payment pending</span><strong id="pendingTotal">$0.00</strong><i class="fa-solid fa-clock"></i></article>
+          <article class="metric-card value"><span>Total order value</span><strong id="orderValue">$0.00</strong><i class="fa-solid fa-heart"></i></article>
+        </section>
+
+        <nav class="dashboard-tabs" aria-label="Admin records">
+          <button class="tab-button active" data-tab="orders"><i class="fa-solid fa-bag-shopping"></i> Food orders <span id="ordersTabCount">0</span></button>
+          <button class="tab-button" data-tab="bookings"><i class="fa-solid fa-calendar-check"></i> Lawn bookings <span id="bookingsTabCount">0</span></button>
+          <button class="tab-button" data-tab="messages"><i class="fa-solid fa-envelope"></i> Messages <span id="messagesTabCount">0</span></button>
+        </nav>
+
+        <section class="data-panel active" id="ordersPanel">
+          <div class="panel-heading"><div><h2>Food orders</h2><p>Stripe updates payment status automatically after a successful checkout.</p></div><input class="table-search" id="orderSearch" type="search" placeholder="Search orders or customers"></div>
+          <div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Fulfillment</th><th>Total</th><th>Payment</th><th>Received</th></tr></thead><tbody id="ordersTable"></tbody></table></div>
+        </section>
+
+        <section class="data-panel" id="bookingsPanel">
+          <div class="panel-heading"><div><h2>Lawn-care bookings</h2><p>Appointments remain payment-pending until the youth team confirms the job.</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Booking</th><th>Customer</th><th>Property</th><th>Package</th><th>Schedule</th><th>Estimate</th><th>Status</th></tr></thead><tbody id="bookingsTable"></tbody></table></div>
+        </section>
+
+        <section class="data-panel" id="messagesPanel">
+          <div class="panel-heading"><div><h2>Customer messages</h2><p>Messages submitted from the public contact form.</p></div></div>
+          <div class="message-list" id="messagesList"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="admin.js"></script>
+</body>
+</html>

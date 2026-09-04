@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Submit Food Order Form
   if (foodOrderForm) {
-    foodOrderForm.addEventListener('submit', (e) => {
+    foodOrderForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       if (Object.keys(cart).length === 0) {
@@ -342,56 +342,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const deliveryAddress = fulfillmentType === 'delivery' ? foodDeliveryAddress.value.trim() : 'Church Pickup: 1437 S 129th E Ave';
       const notes = document.getElementById('foodNotes').value.trim();
 
-      // Compute summary
-      let subtotal = 0;
-      let itemsListStr = '';
-      Object.keys(cart).forEach(id => {
-        const item = menuItems[id];
-        const qty = cart[id];
-        const total = (item.price * qty).toFixed(2);
-        subtotal += item.price * qty;
-        itemsListStr += `<div class="summary-row"><span>${qty}x ${item.name}</span><strong>$${total}</strong></div>`;
-      });
+      const submitButton = document.getElementById('submitFoodOrderBtn');
+      setButtonLoading(submitButton, 'Saving order...');
 
-      const deliveryFee = (fulfillmentType === 'delivery') ? deliveryFeeRate : 0.00;
-      const grandTotal = (subtotal + deliveryFee + selectedTip).toFixed(2);
-      const orderId = 'ZAY-FOOD-' + Math.floor(100000 + Math.random() * 900000);
+      try {
+        const result = await apiRequest('/api/orders', {
+          name: customerName,
+          email: customerEmail,
+          phone: customerPhone,
+          address: deliveryAddress,
+          preferredTime,
+          notes,
+          fulfillmentType,
+          donation: selectedTip,
+          items: Object.entries(cart).map(([id, quantity]) => ({ id, quantity }))
+        });
 
-      if (successModalTitle) successModalTitle.textContent = 'Food Order Confirmed!';
-      if (successModalDesc) successModalDesc.textContent = `Thank you, ${customerName}! Your order has been placed with ZAY Youth Kitchen.`;
+        if (result.paymentMode === 'stripe' && result.checkoutUrl) {
+          window.location.assign(result.checkoutUrl);
+          return;
+        }
 
-      if (confirmationSummaryBox) {
-        confirmationSummaryBox.innerHTML = `
-          <div class="summary-row"><span>Order ID:</span><strong>#${orderId}</strong></div>
-          <div class="summary-row"><span>Fulfillment:</span><strong>${fulfillmentType === 'delivery' ? 'Local Delivery' : 'Church Pickup'}</strong></div>
-          <div class="summary-row"><span>Location:</span><span>${deliveryAddress}</span></div>
-          <div class="summary-row"><span>Scheduled Time:</span><strong>${preferredTime}</strong></div>
-          <div class="summary-row"><span>Contact:</span><span>${customerPhone} (${customerEmail})</span></div>
-          <hr style="margin: 10px 0; border: none; border-top: 1px dashed #CBD5E1;">
-          ${itemsListStr}
-          ${deliveryFee > 0 ? `<div class="summary-row"><span>Delivery Fee:</span><span>+$${deliveryFee.toFixed(2)}</span></div>` : ''}
-          ${selectedTip > 0 ? `<div class="summary-row"><span>Youth Donation:</span><span>+$${selectedTip.toFixed(2)}</span></div>` : ''}
-          <div class="summary-row" style="font-size: 1.05rem; margin-top: 8px; font-weight: 800; color: #FF5D73;">
-            <span>Estimated Total:</span>
-            <span>$${grandTotal}</span>
-          </div>
-          ${notes ? `<div style="margin-top: 8px; font-size: 0.8rem; color: #64748B;"><em>Note: ${notes}</em></div>` : ''}
-        `;
+        showFoodConfirmation(result.orderId, customerName, fulfillmentType, preferredTime, result.totalCents, result.message);
+        resetFoodOrder();
+        openModal(successModal);
+      } catch (error) {
+        showToast(error.message, 'warning');
+      } finally {
+        resetButtonLoading(submitButton);
       }
-
-      // Reset form & cart
-      cart = {};
-      foodOrderForm.reset();
-      selectedTip = 0;
-      fulfillmentType = 'pickup';
-      fulfillmentCards.forEach(c => c.classList.remove('active'));
-      if (fulfillmentCards[0]) fulfillmentCards[0].classList.add('active');
-      deliveryAddressGroup.style.display = 'none';
-      tipButtons.forEach(b => b.classList.remove('active'));
-      if (tipButtons[0]) tipButtons[0].classList.add('active');
-
-      updateCartUI();
-      openModal(successModal);
     });
   }
 
@@ -422,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (lawnBookingForm) {
-    lawnBookingForm.addEventListener('submit', (e) => {
+    lawnBookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const name = document.getElementById('bookName').value.trim();
@@ -434,41 +413,139 @@ document.addEventListener('DOMContentLoaded', () => {
       const time = document.getElementById('bookTime').value;
       const notes = document.getElementById('bookNotes').value.trim();
 
-      const bookingId = 'ZAY-LAWN-' + Math.floor(100000 + Math.random() * 900000);
+      const submitButton = lawnBookingForm.querySelector('button[type="submit"]');
+      setButtonLoading(submitButton, 'Saving booking...');
 
-      closeModal(bookingModal);
+      try {
+        const result = await apiRequest('/api/bookings', {
+          name,
+          email,
+          phone,
+          address,
+          yardSize,
+          preferredDate: date,
+          preferredTime: time,
+          notes
+        });
 
-      if (successModalTitle) successModalTitle.textContent = 'Lawn Mowing Booked!';
-      if (successModalDesc) successModalDesc.textContent = `Thank you, ${name}! Your lawn care appointment has been reserved with the ZAY Youth Team.`;
-
-      if (confirmationSummaryBox) {
-        confirmationSummaryBox.innerHTML = `
-          <div class="summary-row"><span>Booking ID:</span><strong>#${bookingId}</strong></div>
-          <div class="summary-row"><span>Package:</span><strong>${yardSize}</strong></div>
-          <div class="summary-row"><span>Property Address:</span><span>${address}</span></div>
-          <div class="summary-row"><span>Preferred Date:</span><strong>${date}</strong></div>
-          <div class="summary-row"><span>Preferred Time:</span><strong>${time}</strong></div>
-          <div class="summary-row"><span>Customer Contact:</span><span>${phone} (${email})</span></div>
-          ${notes ? `<div style="margin-top: 8px; font-size: 0.8rem; color: #64748B;"><em>Instructions: ${notes}</em></div>` : ''}
-          <div style="margin-top: 12px; padding: 8px; background: #ECFDF5; color: #047857; border-radius: 8px; font-size: 0.8rem; font-weight: 700;">
-            <i class="fa-solid fa-circle-check"></i> Our team supervisor will call/text (918) 346-4561 to confirm weather & arrival time!
-          </div>
-        `;
+        closeModal(bookingModal);
+        if (successModalTitle) successModalTitle.textContent = 'Lawn Mowing Booked!';
+        if (successModalDesc) successModalDesc.textContent = `Thank you, ${name}! Your lawn care appointment has been saved for confirmation.`;
+        if (confirmationSummaryBox) {
+          confirmationSummaryBox.innerHTML = `
+            <div class="summary-row"><span>Booking ID:</span><strong>#${result.bookingId}</strong></div>
+            <div class="summary-row"><span>Package:</span><strong>${yardSize}</strong></div>
+            <div class="summary-row"><span>Preferred Date:</span><strong>${date}</strong></div>
+            <div class="summary-row"><span>Preferred Time:</span><strong>${time}</strong></div>
+            <div style="margin-top: 12px; padding: 8px; background: #ECFDF5; color: #047857; border-radius: 8px; font-size: 0.8rem; font-weight: 700;">
+              <i class="fa-solid fa-circle-check"></i> ${result.message}
+            </div>
+          `;
+        }
+        lawnBookingForm.reset();
+        openModal(successModal);
+      } catch (error) {
+        showToast(error.message, 'warning');
+      } finally {
+        resetButtonLoading(submitButton);
       }
-
-      lawnBookingForm.reset();
-      openModal(successModal);
     });
   }
 
   // General Contact Form
   if (generalContactForm) {
-    generalContactForm.addEventListener('submit', (e) => {
+    generalContactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('contactName').value.trim();
-      generalContactForm.reset();
-      showToast(`Thank you, ${name}! Your message has been sent to ZAY Youth Ministry.`, 'success');
+      const submitButton = generalContactForm.querySelector('button[type="submit"]');
+      setButtonLoading(submitButton, 'Sending message...');
+      try {
+        const result = await apiRequest('/api/messages', {
+          name,
+          email: document.getElementById('contactEmail').value.trim(),
+          phone: document.getElementById('contactPhone').value.trim(),
+          subject: document.getElementById('contactSubject').value,
+          message: document.getElementById('contactMessage').value.trim()
+        });
+        generalContactForm.reset();
+        showToast(result.message, 'success');
+      } catch (error) {
+        showToast(error.message, 'warning');
+      } finally {
+        resetButtonLoading(submitButton);
+      }
     });
+  }
+
+  async function apiRequest(endpoint, payload) {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.error || 'We could not process your request. Please try again.');
+    }
+    return result;
+  }
+
+  function setButtonLoading(button, label) {
+    if (!button) return;
+    button.dataset.label = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${label}`;
+  }
+
+  function resetButtonLoading(button) {
+    if (!button) return;
+    button.disabled = false;
+    if (button.dataset.label) {
+      button.innerHTML = button.dataset.label;
+      delete button.dataset.label;
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>'"]/g, character => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    })[character]);
+  }
+
+  function showFoodConfirmation(orderId, customerName, fulfillment, preferredTime, totalCents, message) {
+    if (successModalTitle) successModalTitle.textContent = 'Food Order Saved!';
+    if (successModalDesc) successModalDesc.textContent = `Thank you, ${customerName}! Your order has been saved for the ZAY Youth Kitchen.`;
+    if (confirmationSummaryBox) {
+      confirmationSummaryBox.innerHTML = `
+        <div class="summary-row"><span>Order ID:</span><strong>#${escapeHtml(orderId)}</strong></div>
+        <div class="summary-row"><span>Fulfillment:</span><strong>${fulfillment === 'delivery' ? 'Local Delivery' : 'Church Pickup'}</strong></div>
+        <div class="summary-row"><span>Requested time:</span><strong>${escapeHtml(preferredTime)}</strong></div>
+        <div class="summary-row" style="font-size: 1.05rem; margin-top: 8px; font-weight: 800; color: #FF5D73;">
+          <span>Estimated Total:</span><span>$${(totalCents / 100).toFixed(2)}</span>
+        </div>
+        <div style="margin-top: 12px; padding: 8px; background: #ECFDF5; color: #047857; border-radius: 8px; font-size: 0.8rem; font-weight: 700;">
+          <i class="fa-solid fa-circle-check"></i> ${escapeHtml(message)}
+        </div>
+      `;
+    }
+  }
+
+  function resetFoodOrder() {
+    cart = {};
+    foodOrderForm.reset();
+    selectedTip = 0;
+    fulfillmentType = 'pickup';
+    fulfillmentCards.forEach(card => card.classList.remove('active'));
+    if (fulfillmentCards[0]) fulfillmentCards[0].classList.add('active');
+    deliveryAddressGroup.style.display = 'none';
+    tipButtons.forEach(button => button.classList.remove('active'));
+    if (tipButtons[0]) tipButtons[0].classList.add('active');
+    updateCartUI();
   }
 
   // Close Success Modal
