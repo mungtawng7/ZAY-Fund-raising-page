@@ -509,6 +509,7 @@ app.post('/api/orders', async (req, res) => {
       mode: 'payment',
       customer_email: email,
       line_items: lineItems,
+      managed_payments: { enabled: false },
       metadata: { foodOrderId: orderId },
       success_url: `${baseUrl}/?payment=success&order=${orderId}`,
       cancel_url: `${baseUrl}/?payment=cancelled&order=${orderId}`
