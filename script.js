@@ -1137,7 +1137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mobileMenuBtn.setAttribute('aria-expanded', 'true');
     const icon = mobileMenuBtn.querySelector('.mobile-toggle-icon');
     if (icon) {
-      icon.classList.remove('fa-ellipsis-vertical');
+      icon.classList.remove('fa-bars');
       icon.classList.add('fa-xmark');
     }
     navMenu.classList.add('open');
@@ -1151,7 +1151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const icon = mobileMenuBtn.querySelector('.mobile-toggle-icon');
     if (icon) {
       icon.classList.remove('fa-xmark');
-      icon.classList.add('fa-ellipsis-vertical');
+      icon.classList.add('fa-bars');
     }
     navMenu.classList.remove('open');
     drawerBackdrop.classList.remove('active');
