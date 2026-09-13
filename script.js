@@ -1102,6 +1102,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!modal) return;
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('modal-open');
     document.body.style.overflow = 'hidden';
   }
 
@@ -1109,7 +1111,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!modal) return;
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    const hasOtherModals = document.querySelector('.modal-overlay.active');
+    const hasDrawer = navMenu && navMenu.classList.contains('open');
+    if (!hasOtherModals && !hasDrawer) {
+      document.body.classList.remove('modal-open');
+      document.documentElement.classList.remove('modal-open');
+      document.body.style.overflow = '';
+    }
   }
 
   // Close modals on overlay backdrop click
@@ -1133,6 +1141,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 8. Mobile Drawer Menu & Navigation Scroll
   // ==========================================
   function openMobileMenu() {
+    if (!mobileMenuBtn || !navMenu) return;
     mobileMenuBtn.classList.add('active');
     mobileMenuBtn.setAttribute('aria-expanded', 'true');
     const icon = mobileMenuBtn.querySelector('.mobile-toggle-icon');
@@ -1141,11 +1150,16 @@ document.addEventListener('DOMContentLoaded', () => {
       icon.classList.add('fa-xmark');
     }
     navMenu.classList.add('open');
-    drawerBackdrop.classList.add('active');
+    if (drawerBackdrop) {
+      drawerBackdrop.classList.add('active');
+    }
+    document.body.classList.add('drawer-open');
+    document.documentElement.classList.add('drawer-open');
     document.body.style.overflow = 'hidden';
   }
 
   function closeMobileMenu() {
+    if (!mobileMenuBtn || !navMenu) return;
     mobileMenuBtn.classList.remove('active');
     mobileMenuBtn.setAttribute('aria-expanded', 'false');
     const icon = mobileMenuBtn.querySelector('.mobile-toggle-icon');
@@ -1154,13 +1168,20 @@ document.addEventListener('DOMContentLoaded', () => {
       icon.classList.add('fa-bars');
     }
     navMenu.classList.remove('open');
-    drawerBackdrop.classList.remove('active');
-    document.body.style.overflow = '';
+    if (drawerBackdrop) {
+      drawerBackdrop.classList.remove('active');
+    }
+    const hasActiveModals = document.querySelector('.modal-overlay.active');
+    if (!hasActiveModals) {
+      document.body.classList.remove('drawer-open');
+      document.documentElement.classList.remove('drawer-open');
+      document.body.style.overflow = '';
+    }
   }
 
   if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener('click', () => {
-      if (navMenu.classList.contains('open')) {
+      if (navMenu && navMenu.classList.contains('open')) {
         closeMobileMenu();
       } else {
         openMobileMenu();
@@ -1175,12 +1196,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (drawerBackdrop) {
     drawerBackdrop.addEventListener('click', closeMobileMenu);
+    drawerBackdrop.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+    }, { passive: false });
   }
 
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
       closeMobileMenu();
     });
+  });
+
+  const mobileBookBtn = document.querySelector('.btn-mobile-book');
+  if (mobileBookBtn) {
+    mobileBookBtn.addEventListener('click', () => {
+      closeMobileMenu();
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 1024 && navMenu && navMenu.classList.contains('open')) {
+      closeMobileMenu();
+    }
   });
 
   // ScrollSpy & Sticky Header Shadow

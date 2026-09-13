@@ -73,6 +73,15 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+html.drawer-open,
+body.drawer-open,
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  height: 100% !important;
+  overscroll-behavior: none !important;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--text-main);
@@ -3031,18 +3040,24 @@ button, input, select, textarea {
     position: fixed;
     top: 0;
     right: 0;
-    width: 290px;
-    max-width: 85vw;
-    height: 100vh;
+    bottom: 0;
+    width: 310px;
+    max-width: min(340px, 86vw);
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
     background: #FFFFFF;
-    box-shadow: var(--shadow-xl);
-    padding: 24px 20px;
+    box-shadow: -10px 0 35px rgba(15, 23, 42, 0.2);
+    padding: max(16px, env(safe-area-inset-top, 16px)) max(18px, env(safe-area-inset-right, 18px)) max(16px, env(safe-area-inset-bottom, 16px)) max(18px, env(safe-area-inset-left, 18px));
     z-index: 1000;
     transform: translateX(100%);
-    transition: transform var(--transition-normal);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
   }
 
   .nav-menu.open {
@@ -3062,9 +3077,10 @@ button, input, select, textarea {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding-bottom: 16px;
-    margin-bottom: 16px;
+    padding-bottom: 12px;
+    margin-bottom: 10px;
     border-bottom: 1px solid var(--border-light, #E2E8F0);
+    flex-shrink: 0;
   }
 
   .mobile-menu-title {
@@ -3073,7 +3089,7 @@ button, input, select, textarea {
     gap: 10px;
     font-family: 'Outfit', sans-serif;
     font-weight: 800;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--dark-slate);
   }
 
@@ -3094,6 +3110,7 @@ button, input, select, textarea {
     justify-content: center;
     font-size: 1.1rem;
     transition: var(--transition-fast);
+    flex-shrink: 0;
   }
 
   .mobile-menu-close:hover {
@@ -3103,23 +3120,33 @@ button, input, select, textarea {
 
   .mobile-menu-footer {
     display: block;
-    margin-top: auto;
-    padding-top: 20px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light, #E2E8F0);
     width: 100%;
+    flex-shrink: 0;
   }
 
   .btn-mobile-book {
     width: 100%;
     display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 12px;
+    gap: 8px;
+    padding: 11px 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
   }
 
   .nav-list {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
-    gap: 10px;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 0 0 auto;
   }
 
   .nav-item {
@@ -3131,14 +3158,14 @@ button, input, select, textarea {
     align-items: center;
     gap: 12px;
     width: 100%;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    padding: 12px 16px;
+    padding: 10px 14px;
     background: #F8FAFC;
     border: 1.5px solid #E2E8F0;
     border-radius: var(--radius-md, 12px);
     color: var(--dark-slate);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     transition: all var(--transition-fast);
   }
 
@@ -3151,7 +3178,7 @@ button, input, select, textarea {
     border-radius: 8px;
     background: var(--primary-light, #EEF2FF);
     color: var(--primary, #4F46E5);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     flex-shrink: 0;
     transition: all var(--transition-fast);
   }
@@ -3186,6 +3213,8 @@ button, input, select, textarea {
     z-index: 998;
     opacity: 0;
     visibility: hidden;
+    touch-action: none;
+    overscroll-behavior: none;
     transition: all var(--transition-normal);
   }
 
@@ -3726,6 +3755,11 @@ button, input, select, textarea {
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
   }
 
+  [data-theme="dark"] .mobile-menu-header,
+  [data-theme="dark"] .mobile-menu-footer {
+    border-color: #263352;
+  }
+
   [data-theme="dark"] .nav-link {
     background: #1E293B;
     border-color: #334155;
@@ -3764,7 +3798,7 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .mobile-menu-title {
-  color: var(--dark-slate);
+  color: #F1F5F9;
 }
 
 [data-theme="dark"] .mobile-menu-close {
