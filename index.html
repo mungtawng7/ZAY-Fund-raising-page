@@ -670,14 +670,25 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <label for="foodCustomerEmail" class="form-label">Email Address *</label>
+              <input type="email" id="foodCustomerEmail" class="form-control" placeholder="yourname@gmail.com" required>
+            </div>
+
             <div class="form-row">
               <div class="form-group">
-                <label for="foodCustomerEmail" class="form-label">Email Address *</label>
-                <input type="email" id="foodCustomerEmail" class="form-control" placeholder="yourname@gmail.com" required>
+                <label for="foodOrderDate" class="form-label">Preferred Date * (Sun–Thu)</label>
+                <input type="date" id="foodOrderDate" class="form-control" required>
               </div>
               <div class="form-group">
-                <label for="foodPreferredTime" class="form-label">Preferred Date & Time *</label>
-                <input type="text" id="foodPreferredTime" class="form-control" placeholder="e.g. Today 12:30 PM (Sun-Thu 8am-4pm)" required>
+                <label for="foodOrderTimeSlot" class="form-label">Preferred Time Slot *</label>
+                <select id="foodOrderTimeSlot" class="form-control" required>
+                  <option value="Morning (8:00 AM - 10:00 AM)">Morning (8:00 AM - 10:00 AM)</option>
+                  <option value="Late Morning (10:00 AM - 12:00 PM)">Late Morning (10:00 AM - 12:00 PM)</option>
+                  <option value="Early Afternoon (12:00 PM - 2:00 PM)" selected>Early Afternoon (12:00 PM - 2:00 PM)</option>
+                  <option value="Late Afternoon (2:00 PM - 4:00 PM)">Late Afternoon (2:00 PM - 4:00 PM)</option>
+                  <option value="As Soon As Possible (8:00 AM - 4:00 PM)">As Soon As Possible (8:00 AM - 4:00 PM)</option>
+                </select>
               </div>
             </div>
 
@@ -721,8 +732,12 @@
               <i class="fa-solid fa-circle-info"></i> Cash, Venmo, Zelle, or Check payable upon pickup/delivery. 100% tax-deductible ministry donation!
             </p>
 
+            <p class="auth-notice-note">
+              <i class="fa-solid fa-lock"></i> Account required to place &amp; track orders live
+            </p>
+
             <button type="submit" class="btn btn-primary btn-lg btn-block" id="submitFoodOrderBtn">
-              <i class="fa-solid fa-check-circle"></i> Submit Food Order & Reserve Items
+              <i class="fa-solid fa-check-circle"></i> Submit Food Order &amp; Reserve Items
             </button>
           </div>
         </form>
@@ -1134,6 +1149,10 @@
             <label for="bookNotes" class="form-label">Additional Notes / Gate Codes / Pets</label>
             <textarea id="bookNotes" class="form-control" rows="2" placeholder="e.g., Gate latch on left side, beware of dog, please avoid vegetable garden..."></textarea>
           </div>
+
+          <p class="auth-notice-note">
+            <i class="fa-solid fa-lock"></i> Account required to book &amp; track service
+          </p>
 
           <div class="modal-footer-actions">
             <button type="button" class="btn btn-outline" id="cancelBookingBtn">Cancel</button>

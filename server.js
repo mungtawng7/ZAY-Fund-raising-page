@@ -411,9 +411,9 @@ app.get('/api/admin/dashboard', requireAdmin, (_req, res) => {
   res.json({ orders, bookings, messages, summary, paymentsConfigured: Boolean(stripe) });
 });
 
-app.post('/api/orders', async (req, res) => {
+app.post('/api/orders', requireAuth, async (req, res) => {
   try {
-    const auth = getSessionUser(req);
+    const auth = { user: req.user, token: req.sessionToken };
     const name = requireText(req.body.name, 'Name');
     const email = requireText(req.body.email, 'Email');
     const phone = requireText(req.body.phone, 'Phone number');
@@ -695,9 +695,9 @@ app.post('/api/bookings/:id/cancel', requireAuth, async (req, res) => {
   }
 });
 
-app.post('/api/bookings', async (req, res) => {
+app.post('/api/bookings', requireAuth, async (req, res) => {
   try {
-    const auth = getSessionUser(req);
+    const auth = { user: req.user, token: req.sessionToken };
     const name = requireText(req.body.name, 'Name');
     const email = requireText(req.body.email, 'Email');
     const phone = requireText(req.body.phone, 'Phone number');

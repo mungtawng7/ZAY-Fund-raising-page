@@ -156,11 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // 3. Date Restrictions for Lawn Booking
+  // 3. Date Restrictions for Lawn Booking & Food Order
   // ==========================================
+  const foodOrderDateInput = document.getElementById('foodOrderDate');
+  const today = new Date();
+  const minDateStr = today.toISOString().split('T')[0];
+
   if (bookDateInput) {
-    const today = new Date();
-    const minDateStr = today.toISOString().split('T')[0];
     bookDateInput.min = minDateStr;
     
     // Default to tomorrow or next valid day
@@ -173,6 +175,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const dayOfWeek = selected.getDay(); // 0 = Sunday, 5 = Friday, 6 = Saturday
       if (dayOfWeek === 5 || dayOfWeek === 6) {
         showToast('Notice: We are closed on Friday & Saturday for Sabbath worship. Please select Sunday–Thursday.', 'warning');
+      }
+    });
+  }
+
+  if (foodOrderDateInput) {
+    foodOrderDateInput.min = minDateStr;
+    foodOrderDateInput.value = minDateStr; // Default to today
+
+    foodOrderDateInput.addEventListener('change', (e) => {
+      const selected = new Date(e.target.value + 'T00:00:00');
+      const dayOfWeek = selected.getDay();
+      if (dayOfWeek === 5 || dayOfWeek === 6) {
+        showToast('Notice: Kitchen is closed on Friday & Saturday for Sabbath worship. Please select Sunday–Thursday.', 'warning');
       }
     });
   }
@@ -288,12 +303,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function handleEmptyCartAlert() {
+    showToast('⚠️ Alert: Your cart is empty! Please select at least 1 food item from the menu above before ordering.', 'warning');
+
+    if (emptyCartState) {
+      emptyCartState.innerHTML = `
+        <div class="empty-cart-alert-box">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <strong>No Food Items Selected!</strong>
+          <p>Please click <strong>"+ Add to Order"</strong> on any food item above to start your order.</p>
+        </div>
+      `;
+    }
+
+    const foodMenuSection = document.getElementById('food-menu');
+    if (foodMenuSection) {
+      foodMenuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    const foodGrid = document.querySelector('.food-menu-grid');
+    if (foodGrid) {
+      foodGrid.classList.add('alert-pulse-grid');
+      setTimeout(() => {
+        foodGrid.classList.remove('alert-pulse-grid');
+      }, 2500);
+    }
+  }
+
   function updateCartUI() {
     const itemIds = Object.keys(cart);
     let totalItems = 0;
 
     if (itemIds.length === 0) {
-      if (emptyCartState) emptyCartState.style.display = 'block';
+      if (emptyCartState) {
+        emptyCartState.style.display = 'block';
+        emptyCartState.innerHTML = `
+          <div class="empty-cart-icon"><i class="fa-solid fa-utensils"></i></div>
+          <p>Your food order is empty right now.</p>
+          <span class="sub-text">Click <strong>"Add to Order"</strong> on any menu item above to start your order!</span>
+        `;
+      }
       if (cartItemsList) {
         cartItemsList.style.display = 'none';
         cartItemsList.innerHTML = '';
@@ -399,14 +448,25 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
 
       if (Object.keys(cart).length === 0) {
-        showToast('Please add at least one food item to your order before submitting.', 'warning');
+        handleEmptyCartAlert();
+        return;
+      }
+
+      if (!currentUser) {
+        showToast('🔐 Sign In Required: Please sign in or create an account to place your order and track it!', 'warning');
+        switchAuthTab('signin');
+        openModal(authModal);
         return;
       }
 
       const customerName = document.getElementById('foodCustomerName').value.trim();
       const customerPhone = document.getElementById('foodCustomerPhone').value.trim();
       const customerEmail = document.getElementById('foodCustomerEmail').value.trim();
-      const preferredTime = document.getElementById('foodPreferredTime').value.trim();
+      
+      const orderDateVal = document.getElementById('foodOrderDate')?.value || '';
+      const orderTimeVal = document.getElementById('foodOrderTimeSlot')?.value || '';
+      const preferredTime = `${orderDateVal} at ${orderTimeVal}`;
+
       const deliveryAddress = fulfillmentType === 'delivery' ? foodDeliveryAddress.value.trim() : 'Church Pickup: 1437 S 129th E Ave';
       const notes = document.getElementById('foodNotes').value.trim();
 
@@ -448,6 +508,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   document.querySelectorAll('.open-booking-btn').forEach(button => {
     button.addEventListener('click', () => {
+      if (!currentUser) {
+        showToast('🔐 Sign In Required: Please sign in or create an account to book lawn mowing and track your service!', 'info');
+        switchAuthTab('signin');
+        openModal(authModal);
+        return;
+      }
       const yardSize = button.getAttribute('data-yard-size');
       if (yardSize && bookYardSizeSelect) {
         for (let i = 0; i < bookYardSizeSelect.options.length; i++) {
@@ -472,6 +538,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (lawnBookingForm) {
     lawnBookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      if (!currentUser) {
+        showToast('🔐 Sign In Required: Please sign in or create an account to book lawn mowing and track your booking!', 'warning');
+        closeModal(bookingModal);
+        switchAuthTab('signin');
+        openModal(authModal);
+        return;
+      }
 
       const name = document.getElementById('bookName').value.trim();
       const phone = document.getElementById('bookPhone').value.trim();
