@@ -579,6 +579,11 @@ button, input, select, textarea {
   align-items: center;
 }
 
+.mobile-menu-header,
+.mobile-menu-footer {
+  display: none;
+}
+
 .nav-list {
   display: flex;
   align-items: center;
@@ -587,6 +592,9 @@ button, input, select, textarea {
 }
 
 .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--text-main);
@@ -594,6 +602,10 @@ button, input, select, textarea {
   border-radius: var(--radius-sm);
   transition: var(--transition-fast);
   position: relative;
+}
+
+.nav-link .nav-icon {
+  display: none;
 }
 
 .nav-link:hover {
@@ -655,42 +667,36 @@ button, input, select, textarea {
   padding: 10px 20px;
 }
 
-/* Mobile Toggle Hamburger */
+/* Mobile Toggle 3-Dot Tap Button */
 .mobile-toggle {
   display: none;
-  background: transparent;
-  border: none;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border: 1.5px solid rgba(79, 70, 229, 0.25);
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
   position: relative;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 5px;
-  padding: 8px;
-  border-radius: var(--radius-sm);
+  justify-content: center;
+  font-size: 1.35rem;
+  padding: 0;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
 }
 
-.mobile-toggle .bar {
-  display: block;
-  width: 24px;
-  height: 2.5px;
-  background-color: var(--dark-slate);
-  border-radius: 2px;
-  transition: var(--transition-normal);
+.mobile-toggle:hover,
+.mobile-toggle.active {
+  background: var(--primary);
+  color: #FFFFFF;
+  border-color: var(--primary);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
 }
 
-.mobile-toggle.active .bar-1 {
-  transform: translateY(7.5px) rotate(45deg);
-}
-
-.mobile-toggle.active .bar-2 {
-  opacity: 0;
-}
-
-.mobile-toggle.active .bar-3 {
-  transform: translateY(-7.5px) rotate(-45deg);
+.mobile-toggle-icon {
+  transition: transform var(--transition-fast);
 }
 
 /* ==========================================================================
@@ -2998,16 +3004,16 @@ button, input, select, textarea {
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1024px) {
   .nav-menu {
     position: fixed;
     top: 0;
-    right: -320px;
-    width: 300px;
+    right: -340px;
+    width: 310px;
     height: 100vh;
     background: #FFFFFF;
     box-shadow: var(--shadow-xl);
-    padding: 80px 24px 24px 24px;
+    padding: 24px 20px;
     z-index: 1000;
     transition: right var(--transition-normal);
     display: flex;
@@ -3019,17 +3025,110 @@ button, input, select, textarea {
     right: 0;
   }
 
+  .mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-light, #E2E8F0);
+  }
+
+  .mobile-menu-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--dark-slate);
+  }
+
+  .mobile-menu-title i {
+    color: var(--primary);
+  }
+
+  .mobile-menu-close {
+    background: #F1F5F9;
+    border: none;
+    color: #64748B;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: var(--transition-fast);
+  }
+
+  .mobile-menu-close:hover {
+    background: var(--secondary-hover);
+    color: #FFFFFF;
+  }
+
+  .mobile-menu-footer {
+    display: block;
+    margin-top: auto;
+    padding-top: 20px;
+    width: 100%;
+  }
+
+  .mobile-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light, #E2E8F0);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+
+  .mobile-theme-toggle:hover {
+    background: #E0E7FF;
+  }
+
+  .btn-mobile-book {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+  }
+
   .nav-list {
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
-    gap: 12px;
+    gap: 8px;
   }
 
   .nav-link {
     width: 100%;
+    font-size: 1.05rem;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .nav-link .nav-icon {
+    display: inline-block;
+    width: 22px;
+    text-align: center;
     font-size: 1.1rem;
-    padding: 10px 14px;
+    color: var(--primary);
+  }
+
+  .btn-nav-book {
+    display: none;
   }
 
   .mobile-toggle {
@@ -3084,6 +3183,33 @@ button, input, select, textarea {
 }
 
 @media (max-width: 640px) {
+  .brand-subtitle {
+    display: none;
+  }
+
+  .brand-logo {
+    gap: 8px;
+  }
+
+  .logo-symbol {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    padding: 3px;
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .cart-btn {
+    padding: 8px 12px;
+  }
+
   .announcement-inner {
     flex-direction: column;
     text-align: center;
@@ -3547,6 +3673,36 @@ button, input, select, textarea {
   background-color: rgba(129, 140, 248, 0.18);
 }
 
+[data-theme="dark"] .mobile-toggle {
+  background: rgba(129, 140, 248, 0.18);
+  color: #A5B4FC;
+  border-color: rgba(129, 140, 248, 0.3);
+}
+
+[data-theme="dark"] .mobile-toggle:hover,
+[data-theme="dark"] .mobile-toggle.active {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .mobile-menu-title {
+  color: var(--dark-slate);
+}
+
+[data-theme="dark"] .mobile-menu-close {
+  background: #1E293B;
+  color: #94A3B8;
+}
+
+[data-theme="dark"] .mobile-menu-close:hover {
+  background: var(--secondary-hover);
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .mobile-menu-header {
+  border-bottom-color: #263352;
+}
+
 /* Theme toggle button */
 .theme-toggle-btn {
   display: inline-flex;
@@ -3570,7 +3726,9 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .theme-toggle-btn {
-  color: #FCD34D;
+  color: #FBBF24;
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.35);
 }
 
 /* Hero & section backgrounds */

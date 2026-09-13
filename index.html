@@ -72,13 +72,32 @@
 
       <!-- Desktop Navigation Menu -->
       <nav class="nav-menu" id="navMenu" aria-label="Primary Navigation">
+        <div class="mobile-menu-header">
+          <div class="mobile-menu-title">
+            <i class="fa-solid fa-compass"></i>
+            <span>Navigation</span>
+          </div>
+          <button type="button" class="mobile-menu-close" id="closeDrawerBtn" aria-label="Close navigation menu" title="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
         <ul class="nav-list">
-          <li class="nav-item"><a href="#home" class="nav-link active">Home</a></li>
-          <li class="nav-item"><a href="#services" class="nav-link">Services</a></li>
-          <li class="nav-item"><a href="#food-menu" class="nav-link">Food Menu</a></li>
-          <li class="nav-item"><a href="#about" class="nav-link">About Us</a></li>
-          <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+          <li class="nav-item"><a href="#home" class="nav-link active"><i class="fa-solid fa-house nav-icon"></i> <span>Home</span></a></li>
+          <li class="nav-item"><a href="#services" class="nav-link"><i class="fa-solid fa-screwdriver-wrench nav-icon"></i> <span>Services</span></a></li>
+          <li class="nav-item"><a href="#food-menu" class="nav-link"><i class="fa-solid fa-utensils nav-icon"></i> <span>Food Menu</span></a></li>
+          <li class="nav-item"><a href="#about" class="nav-link"><i class="fa-solid fa-users nav-icon"></i> <span>About Us</span></a></li>
+          <li class="nav-item"><a href="#contact" class="nav-link"><i class="fa-solid fa-envelope nav-icon"></i> <span>Contact</span></a></li>
         </ul>
+        <div class="mobile-menu-footer">
+          <button type="button" class="mobile-theme-toggle" id="mobileThemeToggleBtn">
+            <i class="fa-solid fa-moon" id="mobileThemeIcon"></i>
+            <span id="mobileThemeLabel">Dark Mode</span>
+          </button>
+          <a href="#services" class="btn btn-primary btn-mobile-book">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Book Now</span>
+          </a>
+        </div>
       </nav>
 
       <!-- Action Area: Cart Trigger & Book Now CTA -->
@@ -124,11 +143,9 @@
           <span>Book Now</span>
         </a>
 
-        <!-- Mobile Menu Toggle Button -->
-        <button class="mobile-toggle" id="mobileMenuBtn" aria-expanded="false" aria-label="Toggle navigation menu" aria-controls="navMenu">
-          <span class="bar bar-1"></span>
-          <span class="bar bar-2"></span>
-          <span class="bar bar-3"></span>
+        <!-- Mobile Menu 3-Dot Toggle Button -->
+        <button class="mobile-toggle" id="mobileMenuBtn" aria-expanded="false" aria-label="Toggle navigation menu" aria-controls="navMenu" title="Menu">
+          <i class="fa-solid fa-ellipsis-vertical mobile-toggle-icon"></i>
         </button>
       </div>
     </div>
