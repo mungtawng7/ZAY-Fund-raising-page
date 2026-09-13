@@ -122,6 +122,15 @@ button, input, select, textarea {
   padding: 80px 0;
 }
 
+/* Offset anchor scroll targets so the sticky header doesn't cover them */
+#home,
+#services,
+#food-menu,
+#about,
+#contact {
+  scroll-margin-top: 110px;
+}
+
 .text-center {
   text-align: center;
 }
@@ -3021,21 +3030,31 @@ button, input, select, textarea {
   .nav-menu {
     position: fixed;
     top: 0;
-    right: -340px;
-    width: 310px;
+    right: 0;
+    width: 290px;
+    max-width: 85vw;
     height: 100vh;
     background: #FFFFFF;
     box-shadow: var(--shadow-xl);
     padding: 24px 20px;
     z-index: 1000;
-    transition: right var(--transition-normal);
+    transform: translateX(100%);
+    transition: transform var(--transition-normal);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
   }
 
   .nav-menu.open {
-    right: 0;
+    transform: translateX(0);
+  }
+
+  /* Hide the header hamburger/X icon while the drawer is open so only the
+     drawer's own close button is shown (avoids two visible exit buttons) */
+  .mobile-toggle.active {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .mobile-menu-header {
@@ -4044,4 +4063,273 @@ button, input, select, textarea {
 /* Smooth theme transition */
 body, .main-header, .hero-section, .card, .modal-dialog, .form-control {
   transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+/* ==========================================================================
+   Responsive Auto-Fit for iPhone Mini/Air/SE & Samsung Galaxy Z Fold
+   ========================================================================== */
+
+/* Global Horizontal Scroll Lock */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  width: 100%;
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .section-padding {
+    padding: 48px 0;
+  }
+
+  /* Header Optimization for iPhone Mini/Air/SE */
+  .header-container {
+    min-height: 64px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .brand-logo {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .logo-symbol {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    padding: 2px;
+  }
+
+  .logo-badge {
+    font-size: 0.55rem;
+    padding: 1px 4px;
+  }
+
+  .brand-title {
+    font-size: 1.05rem;
+  }
+
+  .header-actions {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Hide text label 'Order' on small viewports so cart is a clean icon button */
+  .cart-btn-label {
+    display: none !important;
+  }
+
+  .cart-btn {
+    padding: 7px 10px;
+    gap: 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  .cart-count-badge {
+    padding: 1px 6px;
+    font-size: 0.7rem;
+  }
+
+  .theme-toggle-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .account-btn {
+    padding: 7px 9px;
+  }
+
+  .account-btn .account-btn-label {
+    display: none !important;
+  }
+
+  .mobile-toggle {
+    width: 38px;
+    height: 38px;
+    font-size: 1.15rem;
+  }
+
+  .account-dropdown {
+    right: 0;
+    left: auto;
+    width: min(260px, calc(100vw - 20px));
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding: 40px 0 60px 0;
+  }
+
+  .hero-title {
+    font-size: 2.1rem;
+    line-height: 1.2;
+  }
+
+  .hero-lead {
+    font-size: 0.98rem;
+    margin-bottom: 24px;
+  }
+
+  .hero-chip {
+    font-size: 0.8rem;
+    padding: 6px 14px;
+    margin-bottom: 16px;
+  }
+
+  .hero-main-image {
+    height: 280px;
+  }
+
+  .floating-badge {
+    padding: 8px 12px;
+  }
+
+  .badge-top-right {
+    top: 10px;
+    right: 10px;
+  }
+
+  .badge-bottom-left {
+    bottom: 10px;
+    left: 10px;
+  }
+
+  /* Cart Items on Mobile */
+  .cart-item-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .cart-item-controls {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  /* Modals */
+  .modal-dialog {
+    padding: 18px 14px;
+    margin: 10px auto;
+    width: calc(100% - 16px);
+    max-height: 92vh;
+  }
+
+  .modal-header {
+    padding: 14px;
+  }
+
+  .modal-body {
+    padding: 16px 12px;
+  }
+
+  .modal-footer-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .modal-footer-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Samsung Galaxy Z Fold (folded screen ~280px–340px) & Ultra-Narrow Viewports */
+@media (max-width: 340px) {
+  .container {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .brand-logo {
+    gap: 6px;
+  }
+
+  .logo-symbol {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logo-badge {
+    display: none;
+  }
+
+  .brand-title {
+    font-size: 0.9rem;
+    letter-spacing: 0;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .cart-btn {
+    padding: 6px 8px;
+  }
+
+  .theme-toggle-btn,
+  .mobile-toggle {
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
+  }
+
+  .account-btn {
+    padding: 6px 8px;
+  }
+
+  .hero-title {
+    font-size: 1.65rem;
+  }
+
+  .announcement-bar {
+    font-size: 0.78rem;
+    padding: 6px 0;
+  }
+
+  .announcement-left {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .announcement-right {
+    gap: 4px;
+    font-size: 0.72rem;
+  }
+
+  .divider-dot {
+    display: none;
+  }
+
+  .food-card-action {
+    flex-direction: column;
+  }
+
+  .food-card-action .qty-selector {
+    width: 100%;
+  }
+
+  .food-card-action .qty-input {
+    flex: 1;
+    width: auto;
+  }
+
+  .food-card-action .btn-add-order {
+    width: 100%;
+  }
+
+  .tip-selector {
+    flex-wrap: wrap;
+  }
+
+  .tip-btn {
+    padding: 4px 6px;
+    font-size: 0.75rem;
+  }
 }
